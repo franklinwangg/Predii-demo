@@ -1,0 +1,20 @@
+{
+  "seed": 42,
+  "dev_ratio": 0.5,
+  "dev_document_ids": [
+    "complaint_10965814",
+    "complaint_11657372",
+    "complaint_11668240",
+    "complaint_11701992",
+    "complaint_11716168",
+    "complaint_11724157"
+  ],
+  "eval_document_ids": [
+    "complaint_10734833",
+    "complaint_10837739",
+    "complaint_11320483",
+    "complaint_11642307",
+    "complaint_11712472",
+    "complaint_11750516"
+  ]
+}

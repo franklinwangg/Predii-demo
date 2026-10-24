@@ -1,0 +1,58 @@
+{
+  "vehicle_make_model": [
+    "toyota prius",
+    "prius"
+  ],
+  "component_part": [
+    "brake booster",
+    "brake actuator",
+    "booster pump",
+    "master cylinder",
+    "accumulator",
+    "abs module",
+    "inverter",
+    "headlight",
+    "wiring harness"
+  ],
+  "vehicle_system": [
+    "brake system",
+    "abs",
+    "traction control",
+    "hybrid system",
+    "electrical system"
+  ],
+  "symptom": [
+    "warning light",
+    "stiff brake pedal",
+    "mushy brake",
+    "grinding noise",
+    "hissing noise",
+    "reduced braking"
+  ],
+  "failure_mode": [
+    "failure",
+    "leak",
+    "malfunction",
+    "inoperable",
+    "stall",
+    "loss of braking"
+  ],
+  "repair_maintenance_action": [
+    "replace",
+    "replacement",
+    "inspect",
+    "diagnose",
+    "bleed brake",
+    "repair"
+  ],
+  "fluid_material": [
+    "brake fluid",
+    "coolant",
+    "oil"
+  ],
+  "other_automotive_technical_concept": [
+    "customer support program",
+    "warranty enhancement",
+    "recall"
+  ]
+}
