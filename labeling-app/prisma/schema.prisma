@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum LabelingStatus {
+  UNLABELED
+  IN_PROGRESS
+  LABELED
+}
+
+enum AnnotationCreatorType {
+  HUMAN
+  AI
+}
+
+enum AnnotationStatus {
+  PROPOSED
+  ACCEPTED
+  REJECTED
+}
+
+model Dataset {
+  id                 String      @id @default(cuid())
+  name               String
+  source             String
+  vehicleMake        String
+  vehicleModel       String
+  vehicleYear        Int
+  ingestionCursor    Int         @default(0)
+  ingestionMetadata  Json        @default("{}")
+  labelSchemaId      String
+  labelSchema        LabelSchema @relation(fields: [labelSchemaId], references: [id], onDelete: Restrict)
+  documents          Document[]
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@unique([name, vehicleMake, vehicleModel, vehicleYear])
+  @@index([source])
+}
+
+model Document {
+  id           String         @id @default(cuid())
+  datasetId    String
+  dataset      Dataset        @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  sourceId     String
+  originalText String
+  sourcePayload Json
+  vehicleMake  String
+  vehicleModel String
+  vehicleYear  Int
+  labelingStatus LabelingStatus @default(UNLABELED)
+  annotations  Annotation[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@unique([datasetId, sourceId])
+  @@index([datasetId, labelingStatus])
+  @@index([sourceId])
+}
+
+model Annotation {
+  id             String                @id @default(cuid())
+  documentId     String
+  document       Document              @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  exactText      String
+  startOffset    Int
+  endOffset      Int
+  labelId        String
+  label          Label                 @relation(fields: [labelId], references: [id], onDelete: Restrict)
+  createdBy      String                @default("local-labeler")
+  createdByType  AnnotationCreatorType @default(HUMAN)
+  status         AnnotationStatus      @default(ACCEPTED)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  @@index([documentId, startOffset, endOffset])
+  @@index([labelId])
+  @@index([createdByType, status])
+}
+
+model LabelSchema {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String
+  labels      Label[]
+  datasets    Dataset[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Label {
+  id          String       @id @default(cuid())
+  schemaId    String
+  schema      LabelSchema  @relation(fields: [schemaId], references: [id], onDelete: Cascade)
+  name        String
+  description String
+  color       String       @default("#5576d1")
+  annotations Annotation[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([schemaId, name])
+  @@index([schemaId])
+}
