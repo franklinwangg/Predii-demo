@@ -9,8 +9,6 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleAlert,
-  Expand,
-  Highlighter,
   Info,
   Minus,
   Plus,
@@ -19,11 +17,16 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiRequest } from "@/lib/client-api";
+import { ConfidenceScore } from "@/components/confidence-score";
+import { findPhraseOccurrences, groupMentions, phraseKey } from "@/lib/mention-groups";
 import type { Annotation, DocumentDetail, Label, LabelSchema } from "@/lib/types";
 import type { CSSProperties } from "react";
 import { splitAnnotatedText } from "@/lib/text-spans";
+import { getWords, moveWordSelection, wordSelectionFromRange } from "@/lib/word-selection";
+import type { WordSelection } from "@/lib/word-selection";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 
-type PendingAnnotation = Omit<Annotation, "documentId" | "createdBy" | "createdByType" | "status"> & {
+type PendingAnnotation = Omit<Annotation, "documentId" | "createdBy" | "createdByType" | "status" | "confidenceTotal" | "modelConfidenceScores"> & {
   id: string;
   pending: true;
 };
@@ -43,6 +46,7 @@ const STOP_WORDS = new Set([
 export function ReviewWorkspace({ documentId }: { documentId: string }) {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
+  const wordSelectionRef = useRef<WordSelection | null>(null);
   const [document, setDocument] = useState<DocumentDetail | null>(null);
   const [schemas, setSchemas] = useState<LabelSchema[]>([]);
   const [sequence, setSequence] = useState({
@@ -52,10 +56,8 @@ export function ReviewWorkspace({ documentId }: { documentId: string }) {
     nextId: null as string | null,
   });
   const [selectedSpan, setSelectedSpan] = useState<{ text: string; start: number; end: number } | null>(null);
-  const [selectedLabelId, setSelectedLabelId] = useState("");
   const [pending, setPending] = useState<PendingAnnotation[]>([]);
   const [deEmphasize, setDeEmphasize] = useState(false);
-  const [contextOpen, setContextOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -94,17 +96,37 @@ export function ReviewWorkspace({ documentId }: { documentId: string }) {
   }, [loadDocument]);
 
   const schema = schemas.find((item) => item.id === document?.dataset.labelSchemaId);
-  const labels = schema?.labels ?? [];
+  const labels = useMemo(() => schema?.labels ?? [], [schema]);
   const allAnnotations = useMemo(
     () => [...(document?.annotations ?? []), ...pending],
     [document?.annotations, pending],
   );
+  const humanAnnotations = document?.annotations.filter((annotation) => annotation.createdByType === "HUMAN") ?? [];
+  const aiGroups = groupMentions(document?.annotations.filter((annotation) => annotation.createdByType === "AI") ?? [])
+    .map((group) => ({
+      ...group,
+      mentions: [...group.mentions, ...humanAnnotations.filter((annotation) =>
+        annotation.labelId === group.mentions[0].labelId &&
+        phraseKey(annotation.exactText) === phraseKey(group.mentions[0].exactText))],
+    }));
+  const standaloneHuman = humanAnnotations.filter((annotation) => !aiGroups.some((group) =>
+    group.mentions.some((mention) => mention.id === annotation.id)));
+  const annotationSections = [
+    { title: "High confidence", description: "25–30/30", groups: aiGroups.filter((group) => group.level === "high") },
+    { title: "Low confidence", description: "Below 25/30 · needs review", groups: aiGroups.filter((group) => group.level === "low") },
+    { title: "Not scored", description: "No ensemble score", groups: aiGroups.filter((group) => group.level === "unscored") },
+  ];
   const progressPercent = document ? Math.round(sequence.position / Math.max(sequence.total, 1) * 100) : 0;
 
   function captureSelection() {
     const root = textRef.current;
     const selection = window.getSelection();
-    if (!root || !selection || selection.isCollapsed || !document) return;
+    wordSelectionRef.current = null;
+    if (!root || !selection || !document) return;
+    if (selection.isCollapsed) {
+      setSelectedSpan(null);
+      return;
+    }
     const range = selection.getRangeAt(0);
     if (!root.contains(range.startContainer) || !root.contains(range.endContainer)) return;
     const start = offsetOf(root, range.startContainer, range.startOffset);
@@ -112,13 +134,47 @@ export function ReviewWorkspace({ documentId }: { documentId: string }) {
     const text = document.originalText.slice(start, end);
     if (!text || end <= start) return;
     setSelectedSpan({ text, start, end });
-    setContextOpen(true);
-    if (!selectedLabelId && labels[0]) setSelectedLabelId(labels[0].id);
   }
 
-  function addAnnotation() {
-    if (!selectedSpan || !selectedLabelId) return;
-    const label = labels.find((item) => item.id === selectedLabelId);
+  function navigateWords(event: ReactKeyboardEvent<HTMLDivElement>) {
+    if ((event.key !== "ArrowLeft" && event.key !== "ArrowRight") ||
+        event.ctrlKey || event.metaKey || event.altKey || event.nativeEvent.isComposing || saving || !document) return;
+    const root = textRef.current;
+    const selection = window.getSelection();
+    if (!root || !selection) return;
+    const words = getWords(document.originalText);
+    let current = wordSelectionRef.current;
+    let caret: number | null = null;
+    if (!current && selection.anchorNode && selection.focusNode &&
+        root.contains(selection.anchorNode) && root.contains(selection.focusNode)) {
+      const anchor = offsetOf(root, selection.anchorNode, selection.anchorOffset);
+      const focus = offsetOf(root, selection.focusNode, selection.focusOffset);
+      if (selection.isCollapsed) {
+        caret = focus;
+      } else {
+        current = wordSelectionFromRange(words, Math.min(anchor, focus), Math.max(anchor, focus), anchor > focus);
+      }
+    }
+    const next = moveWordSelection(words, current, caret, event.key === "ArrowRight" ? 1 : -1, event.shiftKey);
+    if (!next) return;
+    event.preventDefault();
+    const first = words[Math.min(next.anchor, next.focus)];
+    const last = words[Math.max(next.anchor, next.focus)];
+    const start = textPosition(root, first.start);
+    const end = textPosition(root, last.end);
+    if (!start || !end) return;
+    if (next.focus < next.anchor) {
+      selection.setBaseAndExtent(end.node, end.offset, start.node, start.offset);
+    } else {
+      selection.setBaseAndExtent(start.node, start.offset, end.node, end.offset);
+    }
+    wordSelectionRef.current = next;
+    setSelectedSpan({ text: document.originalText.slice(first.start, last.end), start: first.start, end: last.end });
+  }
+
+  const addAnnotation = useCallback((labelId: string) => {
+    if (!selectedSpan || saving) return;
+    const label = labels.find((item) => item.id === labelId);
     if (!label) return;
     if (allAnnotations.some((item) =>
       item.startOffset === selectedSpan.start &&
@@ -126,8 +182,14 @@ export function ReviewWorkspace({ documentId }: { documentId: string }) {
       item.labelId === label.id
     )) {
       setNotice("That phrase already has this category.");
+      setSelectedSpan(null);
+      window.getSelection()?.removeAllRanges();
+      if (wordSelectionRef.current) {
+        wordSelectionRef.current = { anchor: wordSelectionRef.current.focus, focus: wordSelectionRef.current.focus };
+      }
       return;
     }
+    setNotice("");
     setPending((items) => [
       ...items,
       {
@@ -143,7 +205,27 @@ export function ReviewWorkspace({ documentId }: { documentId: string }) {
     ]);
     setSelectedSpan(null);
     window.getSelection()?.removeAllRanges();
-  }
+    if (wordSelectionRef.current) {
+      wordSelectionRef.current = { anchor: wordSelectionRef.current.focus, focus: wordSelectionRef.current.focus };
+    }
+  }, [allAnnotations, documentId, labels, saving, selectedSpan]);
+
+  useEffect(() => {
+    function handleShortcut(event: KeyboardEvent) {
+      if (event.defaultPrevented || event.repeat || event.isComposing ||
+          event.ctrlKey || event.metaKey || event.altKey || event.shiftKey ||
+          !selectedSpan || saving || !/^[0-9]$/.test(event.key)) return;
+      const target = event.target;
+      if (target instanceof HTMLElement &&
+          (target.isContentEditable || target.closest("input, textarea, select, [contenteditable]:not([contenteditable='false'])"))) return;
+      const label = labels[event.key === "0" ? 9 : Number(event.key) - 1];
+      if (!label) return;
+      event.preventDefault();
+      addAnnotation(label.id);
+    }
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, [addAnnotation, labels, saving, selectedSpan]);
 
   async function changeLabel(annotation: Annotation | PendingAnnotation, labelId: string) {
     const label = labels.find((item) => item.id === labelId);
@@ -230,7 +312,22 @@ export function ReviewWorkspace({ documentId }: { documentId: string }) {
 
   function navigateTo(targetId: string | null) {
     if (!targetId || pending.length > 0) return;
+    wordSelectionRef.current = null;
+    setSelectedSpan(null);
     router.push(`/documents/${targetId}`);
+  }
+
+  function focusAnnotation(annotation: Annotation | PendingAnnotation) {
+    const root = textRef.current;
+    if (!root) return;
+    const start = textPosition(root, annotation.startOffset);
+    const end = textPosition(root, annotation.endOffset);
+    if (!start || !end) return;
+    wordSelectionRef.current = null;
+    setSelectedSpan({ text: annotation.exactText, start: annotation.startOffset, end: annotation.endOffset });
+    root.focus({ preventScroll: true });
+    window.getSelection()?.setBaseAndExtent(start.node, start.offset, end.node, end.offset);
+    root.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   if (loading) {
@@ -275,60 +372,58 @@ export function ReviewWorkspace({ documentId }: { documentId: string }) {
           <div className="document-meta"><span><span className="source-dot" /> NHTSA OWNER COMPLAINT</span><span>Source ID: {document.sourceId}</span></div>
           <div className="complaint-paper">
             <div className="paper-gutter"><span>01</span><span className="paper-line" /></div>
-            <div className="complaint-text" ref={textRef} onMouseUp={captureSelection} role="textbox" aria-label="Original complaint text" aria-readonly="true">
+            <div className="complaint-text" ref={textRef} onMouseUp={captureSelection} onKeyDown={navigateWords} tabIndex={0} role="textbox" aria-label="Original complaint text" aria-describedby="keyboard-labeling-help" aria-readonly="true" aria-multiline="true">
               {renderHighlighted(document.originalText, allAnnotations, deEmphasize)}
             </div>
           </div>
-          {selectedSpan && (
-            <div className="selection-card">
-              <div className="selection-caption"><Highlighter size={14} /> SELECTED PHRASE <span>·</span> {selectedSpan.end - selectedSpan.start} characters</div>
-              <div className="selection-phrase">“{selectedSpan.text}”</div>
-              <div className="selection-actions">
-                <label className="select-wrap label-select">
-                  <select value={selectedLabelId} onChange={(event) => setSelectedLabelId(event.target.value)} aria-label="Choose entity category">
-                    {labels.map((label) => <option key={label.id} value={label.id}>{label.name}</option>)}
-                  </select><ChevronDown size={14} />
-                </label>
-                <button className="button button-primary button-small" onClick={addAnnotation}><Plus size={15} /> Add annotation</button>
-              </div>
-            </div>
-          )}
-          {contextOpen && selectedSpan && (
-            <div className="context-card">
-              <div><Expand size={14} /> CONTEXT <button onClick={() => setContextOpen(false)} aria-label="Close context">×</button></div>
-              <p>{surroundingContext(document.originalText, selectedSpan.start, selectedSpan.end)}</p>
-            </div>
-          )}
           <div className="document-foot"><Info size={14} /> Owner-submitted text is preserved as received. Selecting text does not change it.</div>
+          <div className="document-foot" id="keyboard-labeling-help"><Info size={14} /> Focus the complaint text and use left/right arrows to select words. Hold Shift to extend or shrink the selection; press a category key shown in the legend to label it.</div>
         </section>
 
         <aside className="annotation-panel">
           <div className="annotation-panel-head"><div><div className="panel-eyebrow">LABELING SCHEMA</div><h2>Annotations <span className="count-badge">{allAnnotations.length}</span></h2></div><div className="schema-menu">{schema?.name ?? "Loading schema"} <ChevronDown size={14} /></div></div>
           <div className="schema-description">{schema?.description}</div>
           <div className="label-legend">
-            {labels.map((label) => <span key={label.id}><i style={{ backgroundColor: label.color }} />{label.name}</span>)}
+            {labels.map((label, index) => <button type="button" key={label.id} disabled={!selectedSpan || saving} onMouseDown={(event) => event.preventDefault()} onClick={() => addAnnotation(label.id)} aria-label={`Label selection as ${label.name}`}><i style={{ backgroundColor: label.color }} />{index < 10 && <kbd>{index === 9 ? 0 : index + 1}</kbd>}{label.name}</button>)}
           </div>
           <div className="annotation-list-head"><span>SELECTED PHRASES</span><span>{allAnnotations.length} TOTAL</span></div>
           <div className="annotation-list">
-            {allAnnotations.length > 0 ? allAnnotations.map((annotation) => (
-              <AnnotationRow
-                key={annotation.id}
-                annotation={annotation}
-                labels={labels}
-                onChange={(labelId) => void changeLabel(annotation, labelId)}
-                onRemove={() => void removeAnnotation(annotation)}
-                onFocus={() => {
-                  setSelectedSpan({ text: annotation.exactText, start: annotation.startOffset, end: annotation.endOffset });
-                  setContextOpen(true);
-                  textRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                }}
-              />
-            )) : (
-              <div className="annotation-empty"><div className="annotation-empty-icon"><Highlighter size={17} /></div><strong>No annotations yet</strong><p>Select a phrase in the complaint to assign an entity category.</p></div>
-            )}
+            {annotationSections.map((section) => <section className="annotation-confidence-section" key={section.title} aria-label={section.title}>
+              <div className="annotation-confidence-heading"><h3>{section.title}</h3><span>{section.groups.length}</span></div>
+              {section.description && <p>{section.description}</p>}
+              {section.groups.length === 0
+                ? <div className="annotation-section-empty">No annotations in this section.</div>
+                : section.groups.map(({ mentions }) => <div className="annotation-group" key={mentions[0].id}>
+                  <div className="annotation-group-title"><strong className={mentions.some((item) => item.knownEntity) ? "known-entity-text" : ""}>{mentions[0].exactText}</strong>
+                    {findPhraseOccurrences(document.originalText, mentions[0].exactText).length > 1 && <span className="entity-count">x{findPhraseOccurrences(document.originalText, mentions[0].exactText).length}</span>}
+                    <span>{mentions[0].label.name}</span></div>
+                  {mentions.some((item) => item.knownEntity) && <div className="known-entity-badge">Known entity: {mentions.find((item) => item.knownEntity)?.knownEntity}</div>}
+                  {mentions.length > 1 && <p>Review matching occurrences together in Entity review.</p>}
+                  {mentions.filter((item) => item.createdByType === "AI").length > 1 && <p>AI occurrence scores: {mentions.filter((item) => item.createdByType === "AI").map((item) =>
+                    item.confidenceTotal === null ? "Not scored" : `${item.confidenceTotal}/30`).join(", ")}</p>}
+                  <details><summary>{mentions.length > 1 ? "View individual occurrences" : "View annotation"}</summary>
+                    {mentions.map((annotation) => <AnnotationRow
+                      key={annotation.id}
+                      annotation={annotation}
+                      labels={labels}
+                      onChange={(labelId) => void changeLabel(annotation, labelId)}
+                      onRemove={() => void removeAnnotation(annotation)}
+                      onFocus={() => focusAnnotation(annotation)}
+                    />)}
+                  </details>
+                  {mentions.length === 1 && <ConfidenceScore total={mentions[0].confidenceTotal} scores={mentions[0].modelConfidenceScores} />}
+                </div>)}
+            </section>)}
+            <section className="annotation-confidence-section" aria-label="Human annotations and drafts">
+              <div className="annotation-confidence-heading"><h3>Human annotations and drafts</h3></div>
+              {[...standaloneHuman, ...pending].map((annotation) =>
+                <AnnotationRow key={annotation.id} annotation={annotation} labels={labels}
+                  onChange={(labelId) => void changeLabel(annotation, labelId)}
+                  onRemove={() => void removeAnnotation(annotation)} onFocus={() => focusAnnotation(annotation)} />)}
+            </section>
           </div>
-          {selectedSpan && <div className="context-inline"><Info size={14} /><span>{surroundingContext(document.originalText, selectedSpan.start, selectedSpan.end)}</span></div>}
-          <div className="schema-reminder"><Info size={14} /><span>Select words or full phrases in the complaint, then assign a category. Annotations can overlap.</span></div>
+          <div className="document-foot"><Info size={14} /> Review low-confidence and unscored AI labels in <Link className="annotation-review-link" href="/entity-review">Entity review</Link>.</div>
+          <div className="schema-reminder"><Info size={14} /><span>Select a phrase, then press its category number or click a category to add a draft. Submit drafts to save them. Annotations can overlap.</span></div>
           <div className="annotation-actions">
             <button className="button button-secondary" disabled={!pending.length} onClick={() => setPending([])}><Minus size={15} /> Discard new</button>
             <button className="button button-primary" disabled={saving || (!pending.length && document.labelingStatus === "LABELED")} onClick={() => void submitAnnotations()}>
@@ -357,7 +452,7 @@ function AnnotationRow({ annotation, labels, onChange, onRemove, onFocus }: {
   return (
     <div className={`annotation-row ${pending ? "annotation-pending" : ""}`}>
       <div className="annotation-row-top">
-        <button className="annotation-phrase" onClick={onFocus} title="Show this phrase in context">“{annotation.exactText}”</button>
+        <button className="annotation-phrase" onClick={onFocus} title="Show this phrase in the complaint">“{annotation.exactText}”</button>
         <button className="annotation-remove" onClick={onRemove} title={pending ? "Remove draft annotation" : "Delete annotation"} aria-label="Remove annotation"><Trash2 size={14} /></button>
       </div>
       <div className="annotation-row-bottom">
@@ -369,10 +464,14 @@ function AnnotationRow({ annotation, labels, onChange, onRemove, onFocus }: {
           <ChevronDown size={12} />
         </label>
         <span className={`annotation-state ${pending ? "draft-state" : ""}`}>
-          {pending ? "Unsaved" : "createdByType" in annotation && annotation.createdByType === "AI" ? "AI proposal" : "Saved"}
+          {pending ? "Unsaved" : "createdByType" in annotation && annotation.createdByType === "AI"
+            ? `AI · ${annotation.status.toLowerCase()}`
+            : "Saved"}
         </span>
         <span className="offset-hint">{annotation.startOffset}–{annotation.endOffset}</span>
       </div>
+      {"createdByType" in annotation && annotation.createdByType === "AI" &&
+        <ConfidenceScore total={annotation.confidenceTotal} scores={annotation.modelConfidenceScores} />}
     </div>
   );
 }
@@ -413,22 +512,16 @@ function offsetOf(root: HTMLElement, target: Node, nodeOffset: number) {
   return range.toString().length;
 }
 
-function surroundingContext(text: string, start: number, end: number) {
-  const paragraphStart = text.lastIndexOf("\n", start - 1) + 1;
-  const nextParagraphBreak = text.indexOf("\n", end);
-  const paragraphEnd = nextParagraphBreak < 0 ? text.length : nextParagraphBreak;
-  const paragraph = text.slice(paragraphStart, paragraphEnd).trim();
-  if (paragraph.length > 0 && (text.includes("\n") || paragraph.length > 260)) return paragraph;
-
-  const sentenceBefore = Math.max(
-    text.lastIndexOf(".", start - 1),
-    text.lastIndexOf("!", start - 1),
-    text.lastIndexOf("?", start - 1),
-  );
-  const afterOffsets = [text.indexOf(".", end), text.indexOf("!", end), text.indexOf("?", end)]
-    .filter((offset) => offset >= 0);
-  const sentenceEnd = afterOffsets.length ? Math.min(...afterOffsets) + 1 : text.length;
-  return text.slice(sentenceBefore + 1, sentenceEnd).trim() || paragraph;
+function textPosition(root: HTMLElement, offset: number): { node: Node; offset: number } | null {
+  const walker = window.document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node = walker.nextNode();
+  while (node) {
+    const length = node.textContent?.length ?? 0;
+    if (offset <= length) return { node, offset };
+    offset -= length;
+    node = walker.nextNode();
+  }
+  return null;
 }
 
 function FileIcon() {

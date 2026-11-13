@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClipboardList, Layers3, Settings2, ShieldCheck } from "lucide-react";
+import { ClipboardList, GitMerge, Layers3, Settings2, ShieldCheck, Tags } from "lucide-react";
 import type { ReactNode } from "react";
 
 export function AppFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isReview = pathname.startsWith("/documents/");
+  const isAnnotations = pathname === "/annotations";
+  const isSynonyms = pathname.startsWith("/synonyms");
+  const isEntityReview = pathname.startsWith("/entity-review");
 
   return (
     <div className="app-shell">
@@ -20,14 +23,22 @@ export function AppFrame({ children }: { children: ReactNode }) {
           </span>
         </Link>
         <div className="nav-section">WORKSPACE</div>
-        <Link className={`nav-link ${!isReview ? "active" : ""}`} href="/">
+        <Link className={`nav-link ${pathname === "/" ? "active" : ""}`} href="/">
           <Layers3 size={17} strokeWidth={1.8} />
           <span>Datasets</span>
         </Link>
-        <Link className={`nav-link ${isReview ? "active" : ""}`} href="/">
+        <Link className={`nav-link ${isReview || isEntityReview ? "active" : ""}`} href="/entity-review">
           <ClipboardList size={17} strokeWidth={1.8} />
-          <span>Labeling queue</span>
+          <span>Entity review</span>
           <span className="nav-arrow">›</span>
+        </Link>
+        <Link className={`nav-link ${isAnnotations ? "active" : ""}`} href="/annotations">
+          <Tags size={17} strokeWidth={1.8} />
+          <span>Saved annotations</span>
+        </Link>
+        <Link className={`nav-link ${isSynonyms ? "active" : ""}`} href="/synonyms">
+          <GitMerge size={17} strokeWidth={1.8} />
+          <span>Synonym review</span>
         </Link>
         <div className="nav-divider" />
         <div className="nav-section">TOOLS</div>
@@ -53,9 +64,12 @@ export function AppFrame({ children }: { children: ReactNode }) {
         <header className="topbar">
           <div className="breadcrumbs">
             <span>Workspace</span><span className="crumb-slash">/</span>
-            <strong>{isReview ? "Document review" : "Datasets"}</strong>
+            <strong>{isReview ? "Document review" : isEntityReview ? "Entity review" : isAnnotations ? "Saved annotations" : isSynonyms ? "Synonym review" : "Datasets"}</strong>
           </div>
           <div className="topbar-right">
+            <Link href={isAnnotations ? "/" : isSynonyms ? "/annotations" : "/synonyms"} className="mobile-nav-link">
+              {isAnnotations ? "Datasets" : isSynonyms ? "Saved annotations" : "Synonym review"}
+            </Link>
             <span className="connection-dot" /> All changes saved
             <span className="topbar-separator" />
             <span className="topbar-help">?</span>

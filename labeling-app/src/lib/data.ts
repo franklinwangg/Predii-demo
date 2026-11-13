@@ -1,8 +1,9 @@
-import { LabelingStatus } from "@/generated/prisma/client";
-import type { Prisma } from "@/generated/prisma/client";
+import { LabelingStatus, Prisma } from "@/generated/prisma/client";
 import { HttpError } from "@/lib/http";
 import { getPrismaClient } from "@/lib/prisma";
 import { isValidTextSpan } from "@/lib/text-spans";
+import { createTermForAnnotation } from "@/lib/synonyms";
+import { normalizeTerm } from "@/lib/synonym-logic";
 import {
   complaintSourceId,
   complaintText,
@@ -77,7 +78,11 @@ export async function getDataset(datasetId: string) {
   const prisma = getPrismaClient();
   const dataset = await prisma.dataset.findUnique({
     where: { id: datasetId },
-    include: { labelSchema: { include: { labels: { orderBy: { name: "asc" } } } } },
+    include: {
+      labelSchema: {
+        include: { labels: { orderBy: [{ sortOrder: "asc" }, { name: "asc" }] } },
+      },
+    },
   });
   if (!dataset) throw new HttpError("Dataset not found.", 404);
   return dataset;
@@ -134,7 +139,9 @@ export async function getDocument(documentId: string) {
       dataset: { select: { id: true, name: true, labelSchemaId: true } },
       annotations: {
         orderBy: [{ startOffset: "asc" }, { createdAt: "asc" }],
-        include: { label: { select: { id: true, name: true, color: true } } },
+        include: { label: { select: { id: true, name: true, color: true } },
+          entity: { select: { canonicalName: true } },
+          term: { select: { alias: { select: { entity: { select: { canonicalName: true } } } } } } },
       },
     },
   });
@@ -154,7 +161,7 @@ export async function getDocument(documentId: string) {
       { createdAt: document.createdAt, id: { gt: document.id } },
     ],
   };
-  const [documentsBefore, total, previous, next] = await Promise.all([
+  const [documentsBefore, total, previous, next, entities] = await Promise.all([
     prisma.document.count({ where: before }),
     prisma.document.count({ where: { datasetId: document.datasetId } }),
     prisma.document.findFirst({
@@ -167,9 +174,18 @@ export async function getDocument(documentId: string) {
       orderBy: [{ createdAt: "asc" }, { id: "asc" }],
       select: { id: true },
     }),
+    prisma.automotiveEntity.findMany({
+      where: { label: { schemaId: document.dataset.labelSchemaId } },
+      select: { labelId: true, canonicalName: true },
+    }),
   ]);
+  const names = new Map(entities.map((entity) => [`${entity.labelId}\0${normalizeTerm(entity.canonicalName)}`, entity.canonicalName]));
   return {
-    document,
+    document: { ...document, annotations: document.annotations.map((annotation) => ({
+      ...annotation,
+      knownEntity: annotation.entity?.canonicalName ?? annotation.term?.alias?.entity.canonicalName ??
+        names.get(`${annotation.labelId}\0${normalizeTerm(annotation.exactText)}`) ?? null,
+    })) },
     position: documentsBefore + 1,
     total,
     previousDocumentId: previous?.id ?? null,
@@ -189,6 +205,136 @@ export async function getDocumentAnnotations(documentId: string) {
     orderBy: [{ startOffset: "asc" }, { createdAt: "asc" }],
     include: { label: { select: { id: true, name: true, color: true } } },
   });
+}
+
+export async function listAnnotationsByLabel(options: {
+  labelId: string;
+  datasetId?: string;
+  page: number;
+  limit: number;
+}) {
+  const prisma = getPrismaClient();
+  const label = await prisma.label.findUnique({
+    where: { id: options.labelId },
+    select: { id: true },
+  });
+  if (!label) throw new HttpError("Category not found.", 404);
+  if (options.datasetId) {
+    const dataset = await prisma.dataset.findUnique({
+      where: { id: options.datasetId },
+      select: { id: true },
+    });
+    if (!dataset) throw new HttpError("Dataset not found.", 404);
+  }
+  const where: Prisma.AnnotationWhereInput = {
+    labelId: options.labelId,
+    ...(options.datasetId ? { document: { datasetId: options.datasetId } } : {}),
+  };
+  const [annotations, total] = await prisma.$transaction([
+    prisma.annotation.findMany({
+      where,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      skip: (options.page - 1) * options.limit,
+      take: options.limit,
+      select: {
+        id: true,
+        exactText: true,
+        startOffset: true,
+        endOffset: true,
+        createdBy: true,
+        createdByType: true,
+        status: true,
+        confidenceTotal: true,
+        modelConfidenceScores: true,
+        document: {
+          select: {
+            id: true,
+            sourceId: true,
+            vehicleMake: true,
+            vehicleModel: true,
+            vehicleYear: true,
+            dataset: { select: { name: true } },
+          },
+        },
+      },
+    }),
+    prisma.annotation.count({ where }),
+  ]);
+  return { annotations, total, page: options.page, limit: options.limit };
+}
+
+export async function listUniqueAnnotationPhrases(options: {
+  labelId: string;
+  datasetId?: string;
+  page: number;
+  limit: number;
+}) {
+  const prisma = getPrismaClient();
+  return prisma.$transaction(async (tx) => {
+    const label = await tx.label.findUnique({ where: { id: options.labelId }, select: { id: true } });
+    if (!label) throw new HttpError("Category not found.", 404);
+    if (options.datasetId) {
+      const dataset = await tx.dataset.findUnique({ where: { id: options.datasetId }, select: { id: true } });
+      if (!dataset) throw new HttpError("Dataset not found.", 404);
+    }
+
+    const datasetId = options.datasetId ?? null;
+    const [counts, rows] = await Promise.all([
+      tx.$queryRaw<{ total: number }[]>`
+        SELECT COUNT(DISTINCT a."exactText")::int AS total
+        FROM "Annotation" a
+        JOIN "Document" d ON d.id = a."documentId"
+        WHERE a."labelId" = ${options.labelId}
+          AND (${datasetId}::text IS NULL OR d."datasetId" = ${datasetId})
+      `,
+      tx.$queryRaw<{
+        id: string;
+        exactText: string;
+        startOffset: number;
+        endOffset: number;
+        createdBy: string;
+        createdByType: "HUMAN" | "AI";
+        status: "PROPOSED" | "ACCEPTED" | "REJECTED";
+        confidenceTotal: number | null;
+        modelConfidenceScores: Prisma.JsonValue;
+        occurrenceCount: number;
+        documentId: string;
+        sourceId: string;
+        vehicleMake: string;
+        vehicleModel: string;
+        vehicleYear: number;
+        datasetName: string;
+      }[]>`
+        WITH ranked AS (
+          SELECT a.*, COUNT(*) OVER (PARTITION BY a."exactText")::int AS "occurrenceCount",
+            ROW_NUMBER() OVER (PARTITION BY a."exactText" ORDER BY a."createdAt" DESC, a.id DESC) AS rank
+          FROM "Annotation" a
+          JOIN "Document" d ON d.id = a."documentId"
+          WHERE a."labelId" = ${options.labelId}
+            AND (${datasetId}::text IS NULL OR d."datasetId" = ${datasetId})
+        )
+        SELECT r.id, r."exactText", r."startOffset", r."endOffset", r."createdBy",
+          r."createdByType", r.status, r."confidenceTotal", r."modelConfidenceScores", r."occurrenceCount", d.id AS "documentId",
+          d."sourceId", d."vehicleMake", d."vehicleModel", d."vehicleYear", ds.name AS "datasetName"
+        FROM ranked r
+        JOIN "Document" d ON d.id = r."documentId"
+        JOIN "Dataset" ds ON ds.id = d."datasetId"
+        WHERE r.rank = 1
+        ORDER BY r."exactText" COLLATE "C"
+        LIMIT ${options.limit} OFFSET ${(options.page - 1) * options.limit}
+      `,
+    ]);
+
+    return {
+      annotations: rows.map(({ documentId, sourceId, vehicleMake, vehicleModel, vehicleYear, datasetName, ...annotation }) => ({
+        ...annotation,
+        document: { id: documentId, sourceId, vehicleMake, vehicleModel, vehicleYear, dataset: { name: datasetName } },
+      })),
+      total: counts[0].total,
+      page: options.page,
+      limit: options.limit,
+    };
+  }, { isolationLevel: "RepeatableRead" });
 }
 
 export async function ingestNextComplaints(datasetId: string) {
@@ -294,11 +440,18 @@ export async function createAnnotations(
   return prisma.$transaction(async (transaction) => {
     const created = [];
     for (const annotation of annotations) {
+      const term = await createTermForAnnotation(
+        transaction,
+        annotation.labelId,
+        annotation.exactText,
+      );
       created.push(
         await transaction.annotation.create({
           data: {
             documentId,
             ...annotation,
+            termId: term?.id ?? null,
+            entityId: term?.alias?.entityId ?? null,
             createdByType: annotation.createdByType,
             status: annotation.status,
           },
@@ -336,9 +489,20 @@ export async function updateAnnotation(
   }
 
   return prisma.$transaction(async (transaction) => {
+    const term = patch.labelId
+      ? await createTermForAnnotation(transaction, patch.labelId, annotation.exactText)
+      : null;
     const updated = await transaction.annotation.update({
       where: { id: annotationId },
-      data: patch,
+      data: {
+        ...patch,
+        ...(patch.labelId
+          ? { termId: term?.id ?? null, entityId: term?.alias?.entityId ?? null }
+          : {}),
+        ...(patch.labelId && patch.labelId !== annotation.labelId
+          ? { confidenceTotal: null, modelConfidenceScores: Prisma.DbNull }
+          : {}),
+      },
       include: { label: { select: { id: true, name: true, color: true } } },
     });
     await refreshDocumentStatus(transaction, annotation.documentId);
@@ -377,6 +541,6 @@ export async function listSchemas() {
   const prisma = getPrismaClient();
   return prisma.labelSchema.findMany({
     orderBy: { name: "asc" },
-    include: { labels: { orderBy: { name: "asc" } } },
+    include: { labels: { orderBy: [{ sortOrder: "asc" }, { name: "asc" }] } },
   });
 }

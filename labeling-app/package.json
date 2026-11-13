@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test src/lib/text-spans.test.ts src/lib/nhtsa.test.ts",
+    "test": "tsx --test src/lib/text-spans.test.ts src/lib/nhtsa.test.ts src/lib/synonym-logic.test.ts src/lib/llm.test.ts src/lib/scoring-progress.test.ts src/lib/annotation-csv.test.ts",
     "typecheck": "tsc --noEmit",
     "db:generate": "prisma generate",
     "db:local:start": "prisma dev start predii-labeling",

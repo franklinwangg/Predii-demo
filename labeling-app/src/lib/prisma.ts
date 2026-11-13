@@ -16,8 +16,13 @@ export function getPrismaClient(): PrismaClient {
     );
   }
   if (!globalForPrisma.prisma) {
+    const configuredPoolMax = process.env.DATABASE_POOL_MAX;
+    const poolMax = configuredPoolMax === undefined ? undefined : Number(configuredPoolMax);
+    if (poolMax !== undefined && (!Number.isSafeInteger(poolMax) || poolMax < 1)) {
+      throw new Error("DATABASE_POOL_MAX must be a positive integer.");
+    }
     globalForPrisma.prisma = new PrismaClient({
-      adapter: new PrismaPg({ connectionString }),
+      adapter: new PrismaPg({ connectionString, max: poolMax }),
     });
   }
   return globalForPrisma.prisma;

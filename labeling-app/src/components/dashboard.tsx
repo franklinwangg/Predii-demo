@@ -20,10 +20,31 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { apiRequest } from "@/lib/client-api";
+import { runScoringPhases } from "@/lib/scoring-progress";
+import type { ScoringPhase, ScoringResult } from "@/lib/scoring-progress";
 import type { Dataset, DocumentSummary } from "@/lib/types";
 
 type StatusFilter = "ALL" | "LABELED" | "UNLABELED";
 const PAGE_SIZE = 30;
+
+type PipelineStats = {
+  complaints: number;
+  processed: number;
+  failed: number;
+  extracted: number;
+  canonical: number;
+  pendingEntities: number;
+  pendingSynonyms: number;
+  resolvedSynonyms: number;
+};
+
+type ScoringProgress = {
+  total: number;
+  results: ScoringResult[];
+  phase: ScoringPhase;
+  failures: Array<ScoringResult & { phase: ScoringPhase }>;
+  status: "running" | "finished" | "stopped";
+};
 
 const statusNames: Record<DocumentSummary["labelingStatus"], string> = {
   LABELED: "Labeled",
@@ -44,6 +65,10 @@ export function Dashboard() {
   const [showCreate, setShowCreate] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [pipeline, setPipeline] = useState<PipelineStats | null>(null);
+  const [pipelineLoading, setPipelineLoading] = useState(false);
+  const [pipelineReload, setPipelineReload] = useState(0);
+  const [scoringProgress, setScoringProgress] = useState<ScoringProgress | null>(null);
   const activeDataset = datasets.find((dataset) => dataset.id === activeDatasetId);
 
   const refreshDocuments = useCallback(async (
@@ -99,12 +124,72 @@ export function Dashboard() {
     return () => window.clearTimeout(timer);
   }, [activeDatasetId, filter, page, refreshDocuments, search]);
 
+  useEffect(() => {
+    if (!activeDatasetId) return;
+    const controller = new AbortController();
+    void apiRequest<PipelineStats>(`/api/pipeline/stats?datasetId=${encodeURIComponent(activeDatasetId)}`, { signal: controller.signal })
+      .then((stats) => { if (!controller.signal.aborted) setPipeline(stats); })
+      .catch((cause: unknown) => { if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : "Could not load pipeline statistics."); });
+    return () => controller.abort();
+  }, [activeDatasetId, pipelineReload]);
+
+  async function runPipeline(action: "extract" | "synonyms") {
+    if (!activeDatasetId) return;
+    setPipelineLoading(true);
+    setError("");
+    setNotice("");
+    try {
+      if (action === "extract") {
+        const stats = await apiRequest<PipelineStats>(`/api/pipeline/stats?datasetId=${encodeURIComponent(activeDatasetId)}`);
+        const total = Math.max(0, stats.complaints - stats.processed);
+        setPipeline(stats);
+        let failures: Array<ScoringResult & { phase: ScoringPhase }> = [];
+        let previousPhase: ScoringPhase | null = null;
+        let previousResults: ScoringResult[] = [];
+        const phases = await runScoringPhases(
+          (phase, excludedDocumentIds) => apiRequest<{ results: ScoringResult[] }>("/api/pipeline/extract", {
+            method: "POST",
+            body: JSON.stringify({ datasetId: activeDatasetId, limit: 1, excludedDocumentIds, phase }),
+          }),
+          (phase, nextResults) => {
+            if (previousPhase !== null && previousPhase !== phase) {
+              failures = [...failures, ...previousResults.filter((item) => item.status !== "completed").map((item) => ({ ...item, phase: previousPhase! }))];
+            }
+            previousPhase = phase;
+            previousResults = nextResults;
+            setScoringProgress({ total, phase, results: nextResults, failures, status: "running" });
+            setPipelineReload((value) => value + 1);
+          },
+        );
+        const last = phases[phases.length - 1];
+        setScoringProgress({
+          total, phase: last.phase, results: last.results,
+          failures: phases.flatMap(({ phase, results }) => results.filter((item) => item.status !== "completed").map((item) => ({ ...item, phase }))),
+          status: "finished",
+        });
+      } else {
+        const response = await apiRequest<{ created: number; examinedTerms: number; hasMoreTerms: boolean }>("/api/synonyms/discover", { method: "POST" });
+        setNotice(`Created ${response.created} synonym proposals from ${response.examinedTerms} terms.${response.hasMoreTerms ? " Run again to process remaining batches." : ""}`);
+      }
+      setPipelineReload((value) => value + 1);
+      await refreshDocuments(activeDatasetId, page, filter, search);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Pipeline operation failed.");
+      setScoringProgress((current) => current ? { ...current, status: "stopped" } : current);
+    } finally {
+      setPipelineReload((value) => value + 1);
+      setPipelineLoading(false);
+    }
+  }
+
   function changeDataset(datasetId: string) {
     setActiveDatasetId(datasetId);
+    setPipeline(null);
     setPage(1);
     setDocuments([]);
     setDocumentTotal(0);
     setError("");
+    setScoringProgress(null);
   }
 
   async function loadNextBatch() {
@@ -123,6 +208,7 @@ export function Dashboard() {
           ? `Added ${result.imported} complaints.`
           : "No new complaints are available to import.",
       );
+      setPipelineReload((value) => value + 1);
       await loadDashboard(activeDataset.id);
       await refreshDocuments(activeDataset.id, 1, filter, search);
     } catch (importError) {
@@ -141,14 +227,14 @@ export function Dashboard() {
       <div className="page-heading">
         <div>
           <div className="eyebrow">DATA OPERATIONS <span>·</span> NHTSA</div>
-          <h1>Datasets</h1>
-          <p>Manage imported vehicle complaints and annotation progress.</p>
+          <h1>Automotive knowledge pipeline</h1>
+          <p>Import complaints, score automotive entities with three local models, and review uncertain labels.</p>
         </div>
         <div className="heading-actions">
-          <button className="button button-secondary" onClick={() => setShowCreate(true)}>
+          <button className="button button-secondary" disabled={pipelineLoading} onClick={() => setShowCreate(true)}>
             <Plus size={16} /> New dataset
           </button>
-          <button className="button button-primary" onClick={loadNextBatch} disabled={!activeDataset || importing}>
+          <button className="button button-primary" onClick={loadNextBatch} disabled={!activeDataset || importing || pipelineLoading}>
             {importing ? <RefreshCw className="spin" size={16} /> : <ArrowDownToLine size={16} />}
             {importing ? "Loading complaints…" : "Load Next 30 Complaints"}
           </button>
@@ -167,7 +253,7 @@ export function Dashboard() {
               <strong>{activeDataset?.name}</strong>
             </div>
             <label className="select-wrap">
-              <select value={activeDatasetId} onChange={(event) => void changeDataset(event.target.value)} aria-label="Select dataset">
+              <select value={activeDatasetId} onChange={(event) => void changeDataset(event.target.value)} disabled={pipelineLoading} aria-label="Select dataset">
                 {datasets.map((dataset) => (
                   <option key={dataset.id} value={dataset.id}>{dataset.name}</option>
                 ))}
@@ -184,18 +270,23 @@ export function Dashboard() {
                 <span className="line-separator" />
                 <span>Schema: <strong>{activeDataset.labelSchema.name}</strong></span>
               </div>
-              <div className="stats-grid">
-                <StatCard label="Total complaints" value={activeDataset.totalDocuments} sub="Imported documents" icon={<FileText size={17} />} />
-                <StatCard label="Labeled" value={activeDataset.labeledDocuments} sub={completion(activeDataset)} accent="green" icon={<Check size={17} />} />
-                <StatCard label="Unlabeled" value={activeDataset.unlabeledDocuments} sub="Ready for review" accent="orange" icon={<ClipboardIcon />} />
-                <StatCard label="Annotations" value={activeDataset.annotationCount} sub="Entity spans created" accent="purple" icon={<Sparkles size={17} />} />
-              </div>
+              {pipeline ? <div className="stats-grid">
+                <StatCard label="Total complaints" value={pipeline.complaints} sub="Imported documents" icon={<FileText size={17} />} />
+                <StatCard label="Processed complaints" value={pipeline.processed} sub={`${pipeline.failed} failed, retryable`} accent="green" icon={<Check size={17} />} />
+                <StatCard label="Extracted entities" value={pipeline.extracted} sub="LLM entity mentions" accent="orange" icon={<ClipboardIcon />} />
+                <StatCard label="Canonical entities" value={pipeline.canonical} sub={`${pipeline.resolvedSynonyms} approved groups`} accent="purple" icon={<Sparkles size={17} />} />
+                <StatCard label="Pending entity reviews" value={pipeline.pendingEntities} sub="Uncertain mentions" accent="orange" icon={<ClipboardIcon />} />
+                <StatCard label="Pending synonym reviews" value={pipeline.pendingSynonyms} sub="Groups awaiting a human" accent="purple" icon={<Sparkles size={17} />} />
+              </div> : <div className="saved-category-message">Pipeline statistics unavailable or loading.</div>}
               <div className="progress-card">
-                <div className="progress-heading">
-                  <div><strong>Labeling progress</strong><span> {activeDataset.labeledDocuments} of {activeDataset.totalDocuments} complaints completed</span></div>
-                  <b>{completion(activeDataset)}</b>
+                <div className="progress-heading"><div><strong>Pipeline actions</strong><span> Entity scoring processes every unscored complaint in this dataset with three local models.</span></div></div>
+                {scoringProgress && <ScoringProgressReport progress={scoringProgress} />}
+                <div className="synonym-actions">
+                  <button className="button button-primary" disabled={pipelineLoading || importing || showCreate} onClick={() => void runPipeline("extract")}>{scoringProgress?.status === "running" ? "Scoring complaints…" : "Score all remaining complaints (3 models)"}</button>
+                  <button className="button button-secondary" disabled={pipelineLoading} onClick={() => void runPipeline("synonyms")}>Run synonym resolution</button>
+                  <Link className="button button-secondary" href="/entity-review">Review entities</Link>
+                  <Link className="button button-secondary" href="/synonyms">Review synonyms</Link>
                 </div>
-                <div className="progress-track"><div style={{ width: completion(activeDataset) }} /></div>
               </div>
             </>
           )}
@@ -281,6 +372,31 @@ export function Dashboard() {
   );
 }
 
+function ScoringProgressReport({ progress }: { progress: ScoringProgress }) {
+  const completed = progress.results.filter((result) => result.status === "completed").length;
+  const failed = [...progress.failures, ...(progress.status === "running" ? progress.results.filter((result) => result.status !== "completed").map((result) => ({ ...result, phase: progress.phase })) : [])];
+  const busy = progress.results.filter((result) => result.status === "busy").length;
+  const attempted = progress.results.length;
+  const max = Math.max(progress.total, attempted);
+  return (
+    <div className="scoring-report" role="status" aria-live="polite">
+      <div className="scoring-report-heading">
+        <strong>{progress.status === "running" ? "Scoring in progress" : progress.status === "stopped" ? "Scoring stopped" : "Scoring pass finished"}</strong>
+        <span>{progress.phase === "compare" ? "Comparing model results" : `Model: ${progress.phase}`} · {attempted} attempted this phase</span>
+      </div>
+      <progress aria-label="Complaints attempted" value={attempted} max={Math.max(1, max)} />
+      <p>{completed} completed this phase · {failed.length} failed or busy across phases{busy ? ` · ${busy} busy this phase` : ""}</p>
+      {progress.status === "running" && <p>Models run one at a time across the dataset; confidence scores are calculated after all three passes. Keep this dashboard open.</p>}
+      {progress.status === "finished" && <p>Only complaints with valid results from all three models were scored. Run scoring again to retry failed work.</p>}
+      {failed.length > 0 && <details>
+        <summary>Show failed complaints</summary>
+        <ul>{failed.map((result) => <li key={`${result.phase}:${result.documentId}`}><Link href={`/documents/${result.documentId}`}>{result.documentId}</Link> ({result.phase}): {result.error ?? "Claimed elsewhere."}</li>)}</ul>
+        <p>Run scoring again to retry failed complaints.</p>
+      </details>}
+    </div>
+  );
+}
+
 function StatCard({ label, value, sub, accent = "blue", icon }: {
   label: string;
   value: number;
@@ -295,11 +411,6 @@ function StatCard({ label, value, sub, accent = "blue", icon }: {
       <div className="stat-sub">{sub}</div>
     </div>
   );
-}
-
-function completion(dataset: Dataset) {
-  if (!dataset.totalDocuments) return "0%";
-  return `${Math.round((dataset.labeledDocuments / dataset.totalDocuments) * 100)}%`;
 }
 
 function ClipboardIcon() {

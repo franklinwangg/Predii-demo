@@ -24,39 +24,54 @@ enum AnnotationStatus {
   REJECTED
 }
 
+enum SynonymClusterStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DEFERRED
+}
+
+enum ExtractionRunStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
 model Dataset {
-  id                 String      @id @default(cuid())
-  name               String
-  source             String
-  vehicleMake        String
-  vehicleModel       String
-  vehicleYear        Int
-  ingestionCursor    Int         @default(0)
-  ingestionMetadata  Json        @default("{}")
-  labelSchemaId      String
-  labelSchema        LabelSchema @relation(fields: [labelSchemaId], references: [id], onDelete: Restrict)
-  documents          Document[]
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
+  id                String      @id @default(cuid())
+  name              String
+  source            String
+  vehicleMake       String
+  vehicleModel      String
+  vehicleYear       Int
+  ingestionCursor   Int         @default(0)
+  ingestionMetadata Json        @default("{}")
+  labelSchemaId     String
+  labelSchema       LabelSchema @relation(fields: [labelSchemaId], references: [id], onDelete: Restrict)
+  documents         Document[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
 
   @@unique([name, vehicleMake, vehicleModel, vehicleYear])
   @@index([source])
 }
 
 model Document {
-  id           String         @id @default(cuid())
-  datasetId    String
-  dataset      Dataset        @relation(fields: [datasetId], references: [id], onDelete: Cascade)
-  sourceId     String
-  originalText String
-  sourcePayload Json
-  vehicleMake  String
-  vehicleModel String
-  vehicleYear  Int
+  id             String         @id @default(cuid())
+  datasetId      String
+  dataset        Dataset        @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  sourceId       String
+  originalText   String
+  sourcePayload  Json
+  vehicleMake    String
+  vehicleModel   String
+  vehicleYear    Int
   labelingStatus LabelingStatus @default(UNLABELED)
-  annotations  Annotation[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  annotations    Annotation[]
+  extractionRuns ExtractionRun[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   @@unique([datasetId, sourceId])
   @@index([datasetId, labelingStatus])
@@ -64,23 +79,38 @@ model Document {
 }
 
 model Annotation {
-  id             String                @id @default(cuid())
-  documentId     String
-  document       Document              @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  exactText      String
-  startOffset    Int
-  endOffset      Int
-  labelId        String
-  label          Label                 @relation(fields: [labelId], references: [id], onDelete: Restrict)
-  createdBy      String                @default("local-labeler")
-  createdByType  AnnotationCreatorType @default(HUMAN)
-  status         AnnotationStatus      @default(ACCEPTED)
-  createdAt      DateTime              @default(now())
-  updatedAt      DateTime              @updatedAt
+  id            String                @id @default(cuid())
+  documentId    String
+  document      Document              @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  exactText     String
+  startOffset   Int
+  endOffset     Int
+  labelId       String
+  label         Label                 @relation(fields: [labelId], references: [id], onDelete: Restrict)
+  createdBy     String                @default("local-labeler")
+  createdByType AnnotationCreatorType @default(HUMAN)
+  status        AnnotationStatus      @default(ACCEPTED)
+  entityId      String?
+  entity        AutomotiveEntity?     @relation(fields: [entityId], references: [id], onDelete: SetNull)
+  termId        String?
+  term          SynonymTerm?          @relation(fields: [termId], references: [id], onDelete: SetNull)
+  extractionRunId String?
+  extractionRun ExtractionRun? @relation(fields: [extractionRunId], references: [id], onDelete: SetNull)
+  confidenceScore Int?
+  confidenceTotal Int?
+  modelConfidenceScores Json?
+  llmStatus     String?
+  llmOutput     Json?
+  reviewDecisions ReviewDecision[]
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
 
   @@index([documentId, startOffset, endOffset])
   @@index([labelId])
   @@index([createdByType, status])
+  @@index([entityId])
+  @@index([termId])
+  @@index([extractionRunId])
 }
 
 model LabelSchema {
@@ -94,16 +124,157 @@ model LabelSchema {
 }
 
 model Label {
-  id          String       @id @default(cuid())
+  id          String             @id @default(cuid())
   schemaId    String
-  schema      LabelSchema  @relation(fields: [schemaId], references: [id], onDelete: Cascade)
+  schema      LabelSchema        @relation(fields: [schemaId], references: [id], onDelete: Cascade)
   name        String
   description String
-  color       String       @default("#5576d1")
+  color       String             @default("#5576d1")
+  sortOrder   Int                @default(0)
   annotations Annotation[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  entities    AutomotiveEntity[]
+  terms       SynonymTerm[]
+  clusters    SynonymCluster[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 
   @@unique([schemaId, name])
   @@index([schemaId])
+}
+
+model AutomotiveEntity {
+  id               String           @id @default(cuid())
+  canonicalName    String
+  description      String?
+  labelId          String
+  label            Label            @relation(fields: [labelId], references: [id], onDelete: Restrict)
+  terms            EntityAlias[]
+  annotations      Annotation[]
+  clusters         SynonymCluster[]
+  resolvedClusters SynonymCluster[] @relation("ResolvedClusterEntity")
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@unique([labelId, canonicalName])
+  @@index([canonicalName])
+}
+
+model SynonymTerm {
+  id             String                 @id @default(cuid())
+  labelId        String
+  label          Label                  @relation(fields: [labelId], references: [id], onDelete: Cascade)
+  text           String
+  normalizedText String
+  embedding      Json?
+  embeddingModel String?
+  annotations    Annotation[]
+  alias          EntityAlias?
+  clusterMembers SynonymClusterMember[]
+  rejectedPairsA RejectedSynonymPair[]  @relation("RejectedPairA")
+  rejectedPairsB RejectedSynonymPair[]  @relation("RejectedPairB")
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  @@unique([labelId, normalizedText])
+  @@index([labelId])
+}
+
+model EntityAlias {
+  id        String           @id @default(cuid())
+  entityId  String
+  entity    AutomotiveEntity @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  termId    String           @unique
+  term      SynonymTerm      @relation(fields: [termId], references: [id], onDelete: Cascade)
+  createdAt DateTime         @default(now())
+
+  @@index([entityId])
+}
+
+model SynonymCluster {
+  id                String                 @id @default(cuid())
+  labelId           String
+  label             Label                  @relation(fields: [labelId], references: [id], onDelete: Cascade)
+  status            SynonymClusterStatus   @default(PENDING)
+  pendingKey        String?                @unique
+  priorityScore     Float                  @default(0)
+  suggestedEntityId String?
+  suggestedEntity   AutomotiveEntity?      @relation(fields: [suggestedEntityId], references: [id], onDelete: SetNull)
+  resolvedEntityId  String?
+  resolvedEntity    AutomotiveEntity?      @relation("ResolvedClusterEntity", fields: [resolvedEntityId], references: [id], onDelete: SetNull)
+  reviewer          String?
+  decisionNote      String?
+  llmStatus         String?
+  llmExplanation    String?
+  llmCanonicalName  String?
+  llmModel          String?
+  reviewDecisions   ReviewDecision[]
+  members           SynonymClusterMember[]
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  @@index([status, priorityScore])
+  @@index([labelId, status])
+}
+
+model ExtractionRun {
+  id            String              @id @default(cuid())
+  documentId    String
+  document      Document            @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  pipelineKey   String
+  model         String
+  status        ExtractionRunStatus @default(PENDING)
+  attempts      Int                 @default(0)
+  lastError     String?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  modelOutput   Json?
+  annotations   Annotation[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@unique([documentId, pipelineKey])
+  @@index([status, updatedAt])
+}
+
+model ReviewDecision {
+  id            String          @id @default(cuid())
+  annotationId  String?
+  annotation    Annotation?     @relation(fields: [annotationId], references: [id], onDelete: SetNull)
+  clusterId     String?
+  cluster       SynonymCluster? @relation(fields: [clusterId], references: [id], onDelete: SetNull)
+  reviewer      String
+  action        String
+  details       Json
+  createdAt     DateTime        @default(now())
+
+  @@index([annotationId, createdAt])
+  @@index([clusterId, createdAt])
+}
+
+model SynonymDiscoveryRun {
+  id          String   @id @default(cuid())
+  fingerprint String   @unique
+  model       String
+  createdAt   DateTime @default(now())
+}
+
+model SynonymClusterMember {
+  clusterId       String
+  cluster         SynonymCluster @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+  termId          String
+  term            SynonymTerm    @relation(fields: [termId], references: [id], onDelete: Cascade)
+  similarityScore Float
+
+  @@id([clusterId, termId])
+  @@index([termId])
+}
+
+model RejectedSynonymPair {
+  termAId   String
+  termA     SynonymTerm @relation("RejectedPairA", fields: [termAId], references: [id], onDelete: Cascade)
+  termBId   String
+  termB     SynonymTerm @relation("RejectedPairB", fields: [termBId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+
+  @@id([termAId, termBId])
 }

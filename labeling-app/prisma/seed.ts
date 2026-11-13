@@ -12,14 +12,15 @@ const prisma = new PrismaClient({
 });
 
 const categories = [
-  ["Component", "#5273d1", "Automotive parts and systems."],
   ["Vehicle", "#168b82", "A vehicle or vehicle type."],
-  ["Manufacturer", "#b66b27", "Vehicle or part manufacturer."],
-  ["Vehicle Model", "#7458bd", "A named vehicle model."],
-  ["Symptom", "#c24f62", "A driver-observed symptom."],
-  ["Failure Mode", "#d18b24", "A described mechanical or electrical failure."],
-  ["Vehicle Indicator", "#397eac", "A dashboard light or vehicle warning."],
-  ["Other", "#737d8e", "A relevant automotive entity not covered above."],
+  ["Automotive Part / System", "#5273d1", "An automotive component, part, or system."],
+  ["Organization", "#527e45", "A manufacturer, dealership, repair facility, agency, or other organization."],
+  ["Problem", "#c24f62", "A symptom, failure mode, warning indicator, or safety event."],
+  ["Repair / Diagnosis", "#7458bd", "A diagnostic finding, repair action, or repair status."],
+  ["Component", "#5273d1", "A vehicle component or system."],
+  ["Manufacturer", "#527e45", "A vehicle or component manufacturer."],
+  ["Symptom", "#c24f62", "An observed symptom or warning."],
+  ["Failure Mode", "#bd782a", "A specific failure mechanism."],
 ] as const;
 
 async function main() {
@@ -34,11 +35,11 @@ async function main() {
     },
   });
 
-  for (const [name, color, description] of categories) {
+  for (const [sortOrder, [name, color, description]] of categories.entries()) {
     await prisma.label.upsert({
       where: { schemaId_name: { schemaId: schema.id, name } },
-      update: { color, description },
-      create: { schemaId: schema.id, name, color, description },
+      update: { color, description, sortOrder },
+      create: { schemaId: schema.id, name, color, description, sortOrder },
     });
   }
 

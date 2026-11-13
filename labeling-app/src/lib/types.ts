@@ -15,6 +15,9 @@ export type Annotation = {
   createdBy: string;
   createdByType: "HUMAN" | "AI";
   status: "PROPOSED" | "ACCEPTED" | "REJECTED";
+  confidenceTotal: number | null;
+  modelConfidenceScores: Record<string, number> | null;
+  knownEntity?: string | null;
   label: Label;
 };
 

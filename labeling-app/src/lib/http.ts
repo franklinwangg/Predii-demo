@@ -31,7 +31,7 @@ export function errorResponse(error: unknown) {
     error.code === "P2002"
   ) {
     return NextResponse.json(
-      { error: "A dataset with these details already exists." },
+      { error: "A record with these values already exists." },
       { status: 409 },
     );
   }

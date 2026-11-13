@@ -29,3 +29,21 @@ export const annotationPatchInput = z.object({
 }).refine((value) => Object.keys(value).length > 0, {
   message: "Provide a labelId or status to update.",
 });
+
+export const synonymMergeInput = z.object({
+  canonicalName: z.string().trim().min(1).max(160),
+  entityId: z.string().min(1).optional(),
+  description: z.string().trim().max(500).optional(),
+  reviewer: z.string().trim().min(1).max(120).default("local-labeler"),
+});
+
+export const synonymDecisionInput = z.object({
+  reviewer: z.string().trim().min(1).max(120).default("local-labeler"),
+  note: z.string().trim().max(500).optional(),
+});
+
+export const canonicalEntityInput = z.object({
+  canonicalName: z.string().trim().min(1).max(160),
+  labelId: z.string().min(1),
+  description: z.string().trim().max(500).optional(),
+});
