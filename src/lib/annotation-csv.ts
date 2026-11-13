@@ -1,4 +1,5 @@
 import { ENTITY_MODEL_NAMES } from "@/lib/entity-confidence";
+import { phraseKey } from "@/lib/mention-groups";
 
 type ExportAnnotation = {
   id: string;
@@ -52,4 +53,16 @@ export function annotationsToCsv(annotations: ExportAnnotation[]): string {
     ].map(csvCell).join(",");
   });
   return `\uFEFF${headers.map(csvCell).join(",")}\r\n${rows.length ? `${rows.join("\r\n")}\r\n` : ""}`;
+}
+
+export function entitiesToCsv(annotations: Array<Pick<ExportAnnotation, "exactText" | "label">>): string {
+  const seen = new Set<string>();
+  const rows: string[] = [];
+  for (const annotation of annotations) {
+    const key = JSON.stringify([phraseKey(annotation.exactText), phraseKey(annotation.label.name)]);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    rows.push(csvCell(`${annotation.exactText} : ${annotation.label.name}`));
+  }
+  return `\uFEFF${csvCell("entity : category")}\r\n${rows.length ? `${rows.join("\r\n")}\r\n` : ""}`;
 }

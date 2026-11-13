@@ -141,15 +141,20 @@ export function Dashboard() {
     try {
       if (action === "extract") {
         const stats = await apiRequest<PipelineStats>(`/api/pipeline/stats?datasetId=${encodeURIComponent(activeDatasetId)}`);
-        const total = Math.max(0, stats.complaints - stats.processed);
+        const { documentIds } = await apiRequest<{ documentIds: string[] }>("/api/pipeline/extract", {
+          method: "POST",
+          body: JSON.stringify({ datasetId: activeDatasetId, phase: "select" }),
+        });
+        const total = documentIds.length;
         setPipeline(stats);
         let failures: Array<ScoringResult & { phase: ScoringPhase }> = [];
         let previousPhase: ScoringPhase | null = null;
         let previousResults: ScoringResult[] = [];
         const phases = await runScoringPhases(
-          (phase, excludedDocumentIds) => apiRequest<{ results: ScoringResult[] }>("/api/pipeline/extract", {
+          documentIds,
+          (phase, selectedDocumentIds, excludedDocumentIds) => apiRequest<{ results: ScoringResult[] }>("/api/pipeline/extract", {
             method: "POST",
-            body: JSON.stringify({ datasetId: activeDatasetId, limit: 1, excludedDocumentIds, phase }),
+            body: JSON.stringify({ datasetId: activeDatasetId, limit: 1, documentIds: selectedDocumentIds, excludedDocumentIds, phase }),
           }),
           (phase, nextResults) => {
             if (previousPhase !== null && previousPhase !== phase) {
@@ -279,10 +284,10 @@ export function Dashboard() {
                 <StatCard label="Pending synonym reviews" value={pipeline.pendingSynonyms} sub="Groups awaiting a human" accent="purple" icon={<Sparkles size={17} />} />
               </div> : <div className="saved-category-message">Pipeline statistics unavailable or loading.</div>}
               <div className="progress-card">
-                <div className="progress-heading"><div><strong>Pipeline actions</strong><span> Entity scoring processes every unscored complaint in this dataset with three local models.</span></div></div>
+                <div className="progress-heading"><div><strong>Pipeline actions</strong><span> Entity scoring processes up to three unscored complaints per run with three local models.</span></div></div>
                 {scoringProgress && <ScoringProgressReport progress={scoringProgress} />}
                 <div className="synonym-actions">
-                  <button className="button button-primary" disabled={pipelineLoading || importing || showCreate} onClick={() => void runPipeline("extract")}>{scoringProgress?.status === "running" ? "Scoring complaints…" : "Score all remaining complaints (3 models)"}</button>
+                  <button className="button button-primary" disabled={pipelineLoading || importing || showCreate} onClick={() => void runPipeline("extract")}>{scoringProgress?.status === "running" ? "Scoring complaints…" : "Score up to 3 complaints (3 models)"}</button>
                   <button className="button button-secondary" disabled={pipelineLoading} onClick={() => void runPipeline("synonyms")}>Run synonym resolution</button>
                   <Link className="button button-secondary" href="/entity-review">Review entities</Link>
                   <Link className="button button-secondary" href="/synonyms">Review synonyms</Link>
@@ -386,8 +391,8 @@ function ScoringProgressReport({ progress }: { progress: ScoringProgress }) {
       </div>
       <progress aria-label="Complaints attempted" value={attempted} max={Math.max(1, max)} />
       <p>{completed} completed this phase · {failed.length} failed or busy across phases{busy ? ` · ${busy} busy this phase` : ""}</p>
-      {progress.status === "running" && <p>Models run one at a time across the dataset; confidence scores are calculated after all three passes. Keep this dashboard open.</p>}
-      {progress.status === "finished" && <p>Only complaints with valid results from all three models were scored. Run scoring again to retry failed work.</p>}
+      {progress.status === "running" && <p>Models run one at a time on the selected complaints; confidence scores are calculated after all three passes. Keep this dashboard open.</p>}
+      {progress.status === "finished" && <p>{progress.total === 0 ? "No unscored complaints remain." : "Only complaints with valid results from all three models were scored. Run scoring again for remaining complaints or to retry failed work."}</p>}
       {failed.length > 0 && <details>
         <summary>Show failed complaints</summary>
         <ul>{failed.map((result) => <li key={`${result.phase}:${result.documentId}`}><Link href={`/documents/${result.documentId}`}>{result.documentId}</Link> ({result.phase}): {result.error ?? "Claimed elsewhere."}</li>)}</ul>

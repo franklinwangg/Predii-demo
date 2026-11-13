@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { getPrismaClient } from "@/lib/prisma";
-import { annotationsToCsv } from "@/lib/annotation-csv";
+import { annotationsToCsv, entitiesToCsv } from "@/lib/annotation-csv";
 import { errorResponse, HttpError } from "@/lib/http";
 
 export const dynamic = "force-dynamic";
@@ -8,6 +8,10 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     const datasetId = request.nextUrl.searchParams.get("datasetId");
+    const format = request.nextUrl.searchParams.get("format") ?? "detailed";
+    if (format !== "detailed" && format !== "entities") {
+      throw new HttpError("Unknown CSV export format.", 400);
+    }
     const prisma = getPrismaClient();
     if (datasetId && !await prisma.dataset.findUnique({ where: { id: datasetId }, select: { id: true } })) {
       throw new HttpError("Dataset not found.", 404);
@@ -24,10 +28,12 @@ export async function GET(request: NextRequest) {
       },
       orderBy: [{ documentId: "asc" }, { startOffset: "asc" }, { id: "asc" }],
     });
-    return new Response(annotationsToCsv(annotations), {
+    return new Response(format === "entities" ? entitiesToCsv(annotations) : annotationsToCsv(annotations), {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="accepted-entity-labels.csv"',
+        "Content-Disposition": format === "entities"
+          ? 'attachment; filename="accepted-entities.csv"'
+          : 'attachment; filename="accepted-entity-labels.csv"',
         "Cache-Control": "no-store",
       },
     });

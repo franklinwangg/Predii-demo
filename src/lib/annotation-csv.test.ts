@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { annotationsToCsv } from "@/lib/annotation-csv";
+import { annotationsToCsv, entitiesToCsv } from "@/lib/annotation-csv";
 
 test("exports an accepted occurrence with escaped values and per-model votes", () => {
   const csv = annotationsToCsv([{
@@ -19,4 +19,20 @@ test("exports an accepted occurrence with escaped values and per-model votes", (
 
 test("empty export has headers and no rows", () => {
   assert.equal(annotationsToCsv([]).split("\r\n").length, 2);
+});
+
+test("exports distinct accepted phrases and categories in the requested one-column format", () => {
+  const csv = entitiesToCsv([
+    { exactText: "Toyota", label: { name: "Manufacturer" } },
+    { exactText: "toyota", label: { name: "Manufacturer" } },
+    { exactText: "Toyota", label: { name: "Vehicle" } },
+    { exactText: 'part, "A"\nsecond line', label: { name: "Component" } },
+    { exactText: "=SUM(1,2)", label: { name: "Component" } },
+  ]);
+  assert.equal(csv, '\uFEFF"entity : category"\r\n"Toyota : Manufacturer"\r\n"Toyota : Vehicle"\r\n' +
+    '"part, ""A""\nsecond line : Component"\r\n"\'=SUM(1,2) : Component"\r\n');
+});
+
+test("empty entity list includes only its header", () => {
+  assert.equal(entitiesToCsv([]), '\uFEFF"entity : category"\r\n');
 });

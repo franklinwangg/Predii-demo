@@ -4,10 +4,27 @@ import { HttpError } from "@/lib/http";
 import { ENTITY_MODELS, aggregateEntityExtractions, extractModelEntities, modelPipelineKey, pipelineKey, restoreModelEntities } from "@/lib/llm";
 import { createTermForAnnotation } from "@/lib/synonyms";
 import { ENTITY_CONFIDENCE_THRESHOLD } from "@/lib/entity-confidence";
+import { SCORING_BATCH_SIZE } from "@/lib/scoring-progress";
 
 const LEASE_MS = 15 * 60 * 1000;
 
-export async function runModelBatch(datasetId: string, model: string, limit: number, excludedDocumentIds: string[] = []) {
+export async function selectScoringDocuments(datasetId: string) {
+  const prisma = getPrismaClient();
+  const dataset = await prisma.dataset.findUnique({ where: { id: datasetId }, select: { id: true } });
+  if (!dataset) throw new HttpError("Dataset not found.", 404);
+  const documents = await prisma.document.findMany({
+    where: {
+      datasetId,
+      NOT: { extractionRuns: { some: { pipelineKey: pipelineKey(), status: ExtractionRunStatus.COMPLETED } } },
+    },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    take: SCORING_BATCH_SIZE,
+    select: { id: true },
+  });
+  return { documentIds: documents.map((document) => document.id) };
+}
+
+export async function runModelBatch(datasetId: string, model: string, limit: number, documentIds: string[], excludedDocumentIds: string[] = []) {
   if (!ENTITY_MODELS.some((name) => name === model)) throw new HttpError("Unknown extraction model.", 400);
   const prisma = getPrismaClient();
   const dataset = await prisma.dataset.findUnique({
@@ -18,7 +35,7 @@ export async function runModelBatch(datasetId: string, model: string, limit: num
   const documents = await prisma.document.findMany({
     where: {
       datasetId,
-      id: { notIn: excludedDocumentIds },
+      id: { in: documentIds, notIn: excludedDocumentIds },
       NOT: { extractionRuns: { some: { OR: [
         { pipelineKey: pipelineKey(), status: ExtractionRunStatus.COMPLETED },
         { pipelineKey: key, status: ExtractionRunStatus.COMPLETED },
@@ -70,7 +87,7 @@ export async function runModelBatch(datasetId: string, model: string, limit: num
   return { results };
 }
 
-export async function runExtractionBatch(datasetId: string, limit: number, skipFailed = false, excludedDocumentIds: string[] = []) {
+export async function runExtractionBatch(datasetId: string, limit: number, documentIds: string[], skipFailed = false, excludedDocumentIds: string[] = []) {
   const prisma = getPrismaClient();
   const dataset = await prisma.dataset.findUnique({
     where: { id: datasetId },
@@ -82,7 +99,7 @@ export async function runExtractionBatch(datasetId: string, limit: number, skipF
   const documents = await prisma.document.findMany({
     where: {
       datasetId,
-      id: { notIn: excludedDocumentIds },
+      id: { in: documentIds, notIn: excludedDocumentIds },
       AND: ENTITY_MODELS.map((name) => ({
         extractionRuns: { some: { pipelineKey: modelPipelineKey(name), status: ExtractionRunStatus.COMPLETED } },
       })),

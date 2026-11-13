@@ -48,6 +48,7 @@ export function SynonymReview() {
   const selectedIdRef = useRef("");
   const [reviewer, setReviewer] = useState("local-labeler");
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [discovering, setDiscovering] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -102,7 +103,7 @@ export function SynonymReview() {
         }
       })
       .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!controller.signal.aborted) { setLoading(false); setRefreshing(false); }
       });
     return () => controller.abort();
   }, [loadClusters, reload]);
@@ -205,7 +206,7 @@ export function SynonymReview() {
         });
         setNotice(action === "reject" ? "Cluster rejected; this term combination will not be suggested again." : "Cluster deferred for later review.");
       }
-      setLoading(true);
+      setRefreshing(true);
       setReload((value) => value + 1);
     } catch (decisionError) {
       setError(decisionError instanceof Error ? decisionError.message : "Could not save this review decision.");
@@ -346,7 +347,7 @@ export function SynonymReview() {
                     )}
                   </select>
                 </label>
-                <button className="button button-secondary" disabled={saving} onClick={() => void moveSelectedTerms()}>Move terms</button>
+                <button className="button button-secondary" disabled={saving || refreshing} onClick={() => void moveSelectedTerms()}>Move terms</button>
               </div>}
 
               <div className="synonym-merge-form">
@@ -394,9 +395,9 @@ export function SynonymReview() {
               </div>
 
               <div className="synonym-actions">
-                <button className="button button-primary" disabled={saving} onClick={() => void decide("merge")}><GitMerge size={15} /> Merge terms</button>
-                <button className="button button-secondary" disabled={saving} onClick={() => void decide("reject")}><X size={15} /> Keep separate</button>
-                <button className="button button-secondary" disabled={saving} onClick={() => void decide("defer")}>Review later</button>
+                <button className="button button-primary" disabled={saving || refreshing} onClick={() => void decide("merge")}><GitMerge size={15} /> Merge terms</button>
+                <button className="button button-secondary" disabled={saving || refreshing} onClick={() => void decide("reject")}><X size={15} /> Keep separate</button>
+                <button className="button button-secondary" disabled={saving || refreshing} onClick={() => void decide("defer")}>Review later</button>
               </div>
             </section>
           )}

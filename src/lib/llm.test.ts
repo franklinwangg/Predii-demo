@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { aggregateEntityExtractions, ENTITY_MODELS, restoreModelEntities, validateExtraction, validateSynonymProposals } from "@/lib/llm";
+import { aggregateEntityExtractions, ENTITY_MODELS, extractModelEntities, proposeSynonyms, restoreModelEntities, validateExtraction, validateSynonymProposals } from "@/lib/llm";
 import type { LlmTerm } from "@/lib/llm";
 import type { Prisma } from "@/generated/prisma/client";
 import { acceptMissingOccurrences, applyEntityReview } from "@/lib/entity-review";
@@ -60,6 +60,61 @@ test("derives every exact repeated span when a model omits offsets", () => {
     "Braking action",
   ]);
   assert.deepEqual(mentions.map((mention) => mention.start_offset), [0, 26]);
+});
+
+test("matches case and whitespace variants to exact original text and UTF-16 offsets", () => {
+  const complaint = "🚗 Had  to\nswerve to avoid collision. The manufacturer and MANUFACTURER.";
+  const mentions = validateExtraction({ entities: [
+    { text: "had to swerve to avoid collision", type: "Symptom", confidence: 8 },
+    { text: "Manufacturer", type: "Component", confidence: 9 },
+  ] }, complaint, ["Symptom", "Component"]);
+  assert.deepEqual(mentions.map((mention) => mention.text), [
+    "Had  to\nswerve to avoid collision", "manufacturer", "MANUFACTURER",
+  ]);
+  for (const mention of mentions) {
+    assert.equal(complaint.slice(mention.start_offset, mention.end_offset), mention.text);
+  }
+  assert.equal(mentions[0].start_offset, 3);
+  assert.equal(mentions[0].originalOutput.text, "had to swerve to avoid collision");
+  assert.deepEqual(restoreModelEntities(JSON.parse(JSON.stringify(mentions)), complaint, ["Symptom", "Component"]), mentions);
+  assert.throws(() => validateExtraction({
+    entities: [{ text: "Failure Mode", type: "Symptom", confidence: 8 }],
+  }, complaint, ["Symptom"]), /no case\/whitespace-normalized match/);
+});
+
+test("normalizes model input and maps its offsets back to the original complaint", async () => {
+  const previousFetch = globalThis.fetch;
+  const complaint = "🚗  ENGINE\t\tStalled.\nHad to swerve.";
+  try {
+    globalThis.fetch = async (_input, init) => {
+      const request = JSON.parse(String(init?.body)) as { messages: Array<{ content: string }> };
+      const input = JSON.parse(request.messages[1].content) as { complaint: string };
+      assert.equal(input.complaint, "🚗 engine stalled. had to swerve.");
+      const start = input.complaint.indexOf("engine stalled");
+      return Response.json({ message: { content: JSON.stringify({ entities: [{
+        text: "ENGINE STALLED", type: "Symptom", confidence: 9,
+        start_offset: start, end_offset: start + "engine stalled".length,
+      }] }) } });
+    };
+    const [entity] = await extractModelEntities(complaint, ["Symptom"], ENTITY_MODELS[0]);
+    assert.equal(entity.text, "ENGINE\t\tStalled");
+    assert.equal(entity.start_offset, complaint.indexOf("ENGINE"));
+    assert.equal(complaint.slice(entity.start_offset, entity.end_offset), entity.text);
+  } finally {
+    globalThis.fetch = previousFetch;
+  }
+});
+
+test("preserves character boundaries when lowercase expands a Unicode character", () => {
+  const complaint = "İ  Brake";
+  const [mention] = validateExtraction({ entities: [
+    { text: "i\u0307 brake", type: "Component", confidence: 8 },
+  ] }, complaint, ["Component"]);
+  assert.equal(mention.text, complaint);
+  assert.equal(mention.end_offset, complaint.length);
+  assert.throws(() => validateExtraction({ entities: [
+    { text: "\u0307", type: "Component", confidence: 8 },
+  ] }, complaint, ["Component"]), /offsets/);
 });
 
 test("classifies confidence scores at the stated threshold", () => {
@@ -185,6 +240,56 @@ test("validates contextual synonym proposals without automatically merging them"
   assert.throws(() => validateSynonymProposals({
     clusters: [{ canonical_name: "Unknown", aliases: ["a", "missing"], status: "resolved", explanation: "" }],
   }, terms), /unknown term/);
+});
+
+test("retries malformed synonym groups with schema and validation feedback", async () => {
+  const previousFetch = globalThis.fetch;
+  const terms: LlmTerm[] = [
+    { id: "a", text: "accelerator", category: "Component", contexts: [] },
+    { id: "b", text: "gas pedal", category: "Component", contexts: [] },
+  ];
+  const requests: Array<{ format: unknown; messages: Array<{ content: string }> }> = [];
+  try {
+    globalThis.fetch = async (_input, init) => {
+      requests.push(JSON.parse(String(init?.body)));
+      const output = requests.length === 1
+        ? { clusters: [{ canonical_name: "pedal", aliases: ["t1"], status: "confirmed", explanation: "" }] }
+        : { clusters: [{ canonical_name: "pedal", aliases: ["t1", "t2"], status: "resolved", explanation: "Same part." }] };
+      return Response.json({ message: { content: JSON.stringify(output) } });
+    };
+    const result = await proposeSynonyms(terms);
+    assert.deepEqual(result[0].aliases, ["a", "b"]);
+    assert.equal(requests.length, 2);
+    assert.equal(typeof requests[0].format, "object");
+    const input = JSON.parse(requests[0].messages[1].content) as { terms: LlmTerm[] };
+    assert.deepEqual(input.terms.map((term) => term.id), ["t1", "t2"]);
+    const retry = JSON.parse(requests[1].messages[1].content) as { validationError: string };
+    assert.match(retry.validationError, /aliases/);
+    assert.match(retry.validationError, /status/);
+  } finally {
+    globalThis.fetch = previousFetch;
+  }
+});
+
+test("reports invalid synonym groups after one retry and rejects unknown IDs", async () => {
+  const previousFetch = globalThis.fetch;
+  const terms: LlmTerm[] = [
+    { id: "a", text: "engine", category: "Component", contexts: [] },
+    { id: "b", text: "motor", category: "Component", contexts: [] },
+  ];
+  let requests = 0;
+  try {
+    globalThis.fetch = async () => {
+      requests++;
+      return Response.json({ message: { content: JSON.stringify({
+        clusters: [{ canonical_name: "engine", aliases: ["t1", "unknown"], status: "resolved", explanation: "" }],
+      }) } });
+    };
+    await assert.rejects(proposeSynonyms(terms), /invalid synonym groups twice.*unknown term ID/);
+    assert.equal(requests, 2);
+  } finally {
+    globalThis.fetch = previousFetch;
+  }
 });
 
 test("human correction is validated, recorded, and linked without modifying the complaint", async () => {

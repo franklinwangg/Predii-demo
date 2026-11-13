@@ -135,7 +135,7 @@ database-dependent functionality has not run until migrations and seed complete 
 - `GET /api/annotations?labelId=...&unique=true` returns paginated distinct phrases and occurrence counts.
 - `PATCH/DELETE /api/annotations/[id]`
 - `GET /api/schemas`
-- `POST /api/pipeline/extract` with `{ "datasetId": "...", "limit": 5, "skipFailed": false }`
+- `POST /api/pipeline/extract` with `{ "datasetId": "...", "phase": "select" }` selects up to three unscored complaints. Subsequent requests provide those `documentIds`, a model name or `compare` as `phase`, and an optional `limit` (maximum 3) and `excludedDocumentIds`.
 - `GET /api/pipeline/stats?datasetId=...`
 - `GET /api/entity-review?page=1`
 - `POST /api/entity-review/[id]`
@@ -180,11 +180,15 @@ LLM_API_KEY=""
 
 The selected endpoint receives complaint text and representative complaint sentences. Use only a
 provider authorized to process this data. The provider must support JSON response format. The app
-validates categories and exact UTF-16 offsets. Missing or invalid offsets are derived from all exact
-occurrences of the returned phrase; confidence values expressed on a 0–1 scale are converted to the
-nearest 1–10 integer. If the returned phrase does not occur in the complaint, that document fails
-explicitly and can be retried. Completed extraction runs are cached by document, endpoint, model, and pipeline
-version. The app runs each model across the dataset in turn, persists its validated output,
+validates categories and UTF-16 offsets. Complaints sent for entity extraction are lowercased and
+whitespace runs are collapsed; the stored complaint is not changed. Returned phrases are matched
+case-insensitively with normalized whitespace and mapped back to exact original text and offsets.
+Missing or invalid offsets are derived from all matching occurrences. Confidence values expressed
+on a 0–1 scale are converted to the nearest 1–10 integer. If the returned phrase does not occur
+even after normalization, the model's attempt fails explicitly and can be retried; normalization
+cannot repair invented or paraphrased entities. Previously saved valid model outputs are reused.
+Completed extraction runs are cached by document, endpoint, model, and pipeline
+version. The app runs each model across the selected complaints in turn, persists its validated output,
 and compares results after all three model passes finish. A complaint is scored only when all
 three model outputs are available; failed model calls can be retried without rerunning successful
 models. For each
@@ -192,9 +196,11 @@ exact-span/category candidate, scores from models that return that candidate are
 that does not return it contributes zero. Category disagreements are scored separately, so a
 candidate must receive at least 25/30 for automatic acceptance. Failed attempts are retried;
 abandoned processing leases expire after 15 minutes. Existing human decisions are preserved.
-The **Score all remaining complaints (3 models)** dashboard action processes every complaint in
-the selected dataset not yet scored by this ensemble. Failed complaints are reported while the
-remaining documents continue; failed runs can be retried. Mentions from earlier single-model runs
+The **Score up to 3 complaints (3 models)** dashboard action selects at most three complaints in
+the selected dataset not yet scored by this ensemble. All model and comparison phases use the same
+selection, including complaints with previously cached model outputs. Failed complaints are reported
+while the remaining selected documents continue; run the action again for the next batch or to retry
+failed work. Mentions from earlier single-model runs
 remain visible as unscored and require human review until ensemble scoring is run.
 The entity review and complaint annotation views show each saved ensemble total and model vote.
 The complaint annotation panel separates high-confidence, low-confidence, unscored AI, and
@@ -204,6 +210,9 @@ annotation occurrence, either across all datasets or for the selected dataset. P
 rejected labels are excluded. The CSV includes complaint ID, category, offsets, creator, total
 confidence, and each model's vote. A zero vote means no matching proposal; blank values mean
 no score is recorded. Spreadsheet formula-like text is prefixed with an apostrophe for safety.
+Alternatively, **Download entity list (CSV)** exports one `entity : category` field per distinct
+accepted phrase and category, ignoring capitalization when deduplicating. It uses the same dataset
+filter, preserves the first observed spelling, and excludes proposed and rejected labels.
 Repeated AI mentions of the same phrase and category within a complaint appear once with an
 occurrence count. A single accept, reject, or category decision in Entity review applies to all
 matching pending occurrences; already reviewed or automatically accepted mentions are not changed.
@@ -226,11 +235,13 @@ To use the workflow:
 
 1. Apply migrations with `npm run db:deploy`.
 2. Configure and start the LLM provider, then import complaints on the dashboard.
-3. Use **Score all remaining complaints (3 models)** to score every imported complaint.
+3. Use **Score up to 3 complaints (3 models)**, repeating as needed for remaining complaints.
 4. Open **Entity review** to see high-confidence, low-confidence, and unscored labels in separate
    sections; correct and accept or reject mentions needing review.
 5. Run synonym resolution repeatedly. It sends batches of up to 40 accepted terms of one category,
    with representative complaint sentences, to the LLM. Completed identical batches are cached.
+   Ollama receives a structured response schema; invalid proposals are retried once and are never saved
+   unless they pass validation.
 6. Open **Synonym review** to inspect explanations, move terms between visible groups of the same
    category, choose or create a canonical entity, and approve, reject, or defer a group.
 

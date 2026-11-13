@@ -94,6 +94,9 @@ export function SavedAnnotations() {
           <a className="button button-primary" href={`/api/annotations/export${datasetId ? `?datasetId=${encodeURIComponent(datasetId)}` : ""}`} download>
             <ArrowDownToLine size={15} /> Download accepted labels (CSV)
           </a>
+          <a className="button button-secondary" href={`/api/annotations/export?format=entities${datasetId ? `&datasetId=${encodeURIComponent(datasetId)}` : ""}`} download>
+            <ArrowDownToLine size={15} /> Download entity list (CSV)
+          </a>
         </div>
       </div>
       {loading ? (

@@ -36,6 +36,7 @@ export function EntityReview() {
   const [reload, setReload] = useState(0);
   const [result, setResult] = useState<ReviewPage | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   useEffect(() => {
     const controller = new AbortController();
@@ -52,7 +53,7 @@ export function EntityReview() {
       .catch((cause: unknown) => {
         if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : "Could not load entity reviews.");
       })
-      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+      .finally(() => { if (!controller.signal.aborted) { setLoading(false); setRefreshing(false); } });
     return () => controller.abort();
   }, [page, reload]);
 
@@ -61,11 +62,16 @@ export function EntityReview() {
     setReload((value) => value + 1);
   }
 
+  function refreshAfterReview() {
+    setRefreshing(true);
+    setReload((value) => value + 1);
+  }
+
   return <div className="page-wrap">
     <div className="page-heading">
       <div><div className="eyebrow">DATA OPERATIONS · ENTITY EXTRACTION</div><h1>Entity review</h1>
         <p>Labels are grouped by their three-model confidence total. Totals of 25/30 or higher are high confidence; lower totals need human review.</p></div>
-      <button className="button button-secondary" onClick={refresh} disabled={loading}><RefreshCw size={15} /> Refresh scores</button>
+      <button className="button button-secondary" onClick={refresh} disabled={loading || refreshing}><RefreshCw size={15} /> Refresh scores</button>
     </div>
     {error && <div className="alert alert-error" role="alert"><CircleAlert size={18} />{error}</div>}
     {loading ? <div className="page-loading"><span className="spinner" /> Loading reviews…</div>
@@ -75,8 +81,8 @@ export function EntityReview() {
           <strong>Complaint {result.document.sourceId}</strong>
           <span>{page} of {result.total} complaints with extracted labels</span>
           <div className="heading-actions">
-            <button className="button button-secondary" disabled={page <= 1} onClick={() => { setLoading(true); setPage(page - 1); }}>Previous</button>
-            <button className="button button-secondary" disabled={page >= result.total} onClick={() => { setLoading(true); setPage(page + 1); }}>Next</button>
+            <button className="button button-secondary" disabled={refreshing || page <= 1} onClick={() => { setLoading(true); setPage(page - 1); }}>Previous</button>
+            <button className="button button-secondary" disabled={refreshing || page >= result.total} onClick={() => { setLoading(true); setPage(page + 1); }}>Next</button>
           </div>
         </div>
         <div className="synonym-detail">
@@ -95,7 +101,8 @@ export function EntityReview() {
           groups={groupMentions(result.document.annotations).filter((group) => group.level === "low")}
           labels={result.document.dataset.labelSchema.labels}
           originalText={result.document.originalText}
-          onReviewed={refresh}
+          onReviewed={refreshAfterReview}
+          refreshing={refreshing}
         />
         <ConfidenceSection
           title="Not scored"
@@ -103,19 +110,21 @@ export function EntityReview() {
           groups={groupMentions(result.document.annotations).filter((group) => group.level === "unscored")}
           labels={result.document.dataset.labelSchema.labels}
           originalText={result.document.originalText}
-          onReviewed={refresh}
+          onReviewed={refreshAfterReview}
+          refreshing={refreshing}
         />
       </>}
   </div>;
 }
 
-function ConfidenceSection({ title, description, groups, labels, originalText, onReviewed }: {
+function ConfidenceSection({ title, description, groups, labels, originalText, onReviewed, refreshing = false }: {
   title: string;
   description: string;
   groups: ReturnType<typeof groupMentions<Mention>>;
   labels?: Label[];
   originalText?: string;
   onReviewed?: () => void;
+  refreshing?: boolean;
 }) {
   return <section className="confidence-section">
     <div className="confidence-section-heading">
@@ -142,23 +151,26 @@ function ConfidenceSection({ title, description, groups, labels, originalText, o
             </div>)}
           </details>
           {labels && originalText && onReviewed && group.mentions.some((mention) => mention.status === "PROPOSED") && <MentionReview
+            key={group.mentions.find((mention) => mention.status === "PROPOSED")!.id}
             mention={group.mentions.find((mention) => mention.status === "PROPOSED")!}
             occurrences={group.mentions.filter((mention) => mention.status === "PROPOSED")}
             labels={labels}
             originalText={originalText}
             onReviewed={onReviewed}
+            refreshing={refreshing}
           />}
         </article>)}
       </div>}
   </section>;
 }
 
-function MentionReview({ mention, occurrences, labels, originalText, onReviewed }: {
+function MentionReview({ mention, occurrences, labels, originalText, onReviewed, refreshing }: {
   mention: Mention;
   occurrences: Mention[];
   labels: Label[];
   originalText: string;
   onReviewed: () => void;
+  refreshing: boolean;
 }) {
   const [text, setText] = useState(mention.exactText);
   const [start, setStart] = useState(String(mention.startOffset));
@@ -206,8 +218,8 @@ function MentionReview({ mention, occurrences, labels, originalText, onReviewed 
       <label className="synonym-field">Reviewer<input value={reviewer} onChange={(event) => setReviewer(event.target.value)} /></label>
     </div>
     <div className="synonym-actions">
-      <button className="button button-primary" disabled={saving} onClick={() => void decide("accept")}>Accept</button>
-      <button className="button button-secondary" disabled={saving} onClick={() => void decide("reject")}>Reject</button>
+      <button className="button button-primary" disabled={saving || refreshing} onClick={() => void decide("accept")}>Accept</button>
+      <button className="button button-secondary" disabled={saving || refreshing} onClick={() => void decide("reject")}>Reject</button>
     </div>
   </div>;
 }
