@@ -1,2 +1,0 @@
-[console_scripts]
-auto-benchmark = auto_entity_benchmark.cli:main

@@ -1,1 +1,0 @@
-"""Extraction approaches package."""
