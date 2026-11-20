@@ -1,6 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { aggregateEntityExtractions, ENTITY_MODELS, extractModelEntities, proposeSynonyms, restoreModelEntities, validateExtraction, validateSynonymProposals } from "@/lib/llm";
+import {
+  ENTITY_MODELS,
+  extractModelEntities,
+  extractModelEntitiesWithPrompt,
+  proposeSynonyms,
+  restoreModelEntities,
+  validateExtraction,
+  validateSynonymProposals,
+} from "@/lib/llm";
 import type { LlmTerm } from "@/lib/llm";
 import type { Prisma } from "@/generated/prisma/client";
 import { acceptMissingOccurrences, applyEntityReview } from "@/lib/entity-review";
@@ -105,6 +113,31 @@ test("normalizes model input and maps its offsets back to the original complaint
   }
 });
 
+test("extracts with an experimental category-specific prompt through shared validation", async () => {
+  const previousFetch = globalThis.fetch;
+  const prompt = "Extract components only.";
+  const complaint = "The Brake failed.";
+  try {
+    globalThis.fetch = async (_input, init) => {
+      const request = JSON.parse(String(init?.body)) as {
+        messages: Array<{ role: string; content: string }>;
+      };
+      assert.equal(request.messages[0].content, prompt);
+      const input = JSON.parse(request.messages[1].content) as { complaint: string; categories: string[] };
+      assert.equal(input.complaint, "the brake failed.");
+      assert.deepEqual(input.categories, ["Component"]);
+      return Response.json({ message: { content: JSON.stringify({ entities: [{
+        text: "brake", type: "Component", confidence: 10, start_offset: 4, end_offset: 9,
+      }] }) } });
+    };
+    const [entity] = await extractModelEntitiesWithPrompt(complaint, ["Component"], ENTITY_MODELS[0], prompt);
+    assert.equal(entity.text, "Brake");
+    assert.equal(entity.type, "Component");
+  } finally {
+    globalThis.fetch = previousFetch;
+  }
+});
+
 test("preserves character boundaries when lowercase expands a Unicode character", () => {
   const complaint = "İ  Brake";
   const [mention] = validateExtraction({ entities: [
@@ -118,18 +151,19 @@ test("preserves character boundaries when lowercase expands a Unicode character"
 });
 
 test("classifies confidence scores at the stated threshold", () => {
-  assert.equal(ENTITY_CONFIDENCE_THRESHOLD, 25);
-  assert.equal(isConfidentEntity(25), true);
-  assert.equal(isConfidentEntity(30), true);
-  assert.equal(isConfidentEntity(24), false);
+  assert.equal(ENTITY_CONFIDENCE_THRESHOLD, 9);
+  assert.equal(isConfidentEntity(9), true);
+  assert.equal(isConfidentEntity(10), true);
+  assert.equal(isConfidentEntity(8), false);
+  assert.equal(isConfidentEntity(25), false);
   assert.equal(isConfidentEntity(null), false);
 });
 
 test("groups repeated phrases case-insensitively by category and uses the least confident scored occurrence", () => {
   const mentions = [
-    { id: "1", exactText: "Toyota", labelId: "make", confidenceTotal: 29 },
-    { id: "2", exactText: "toyota", labelId: "make", confidenceTotal: 10 },
-    { id: "3", exactText: "Toyota", labelId: "vehicle", confidenceTotal: null },
+    { id: "1", exactText: "Toyota", labelId: "make", confidenceScore: 10 },
+    { id: "2", exactText: "toyota", labelId: "make", confidenceScore: 6 },
+    { id: "3", exactText: "Toyota", labelId: "vehicle", confidenceScore: null },
   ];
   const groups = groupMentions(mentions);
   assert.equal(groups.length, 2);
@@ -167,42 +201,20 @@ test("accepting missing occurrences preserves existing labels and records human 
   assert.equal(decisions.length, 1);
 });
 
-test("restores persisted model results without inventing offsets or votes", () => {
+test("restores persisted single-model results without inventing offsets", () => {
   const complaint = "engine stalled";
   const entities = validateExtraction({ entities: [{ text: "engine", type: "Component", confidence: 9 }] }, complaint, ["Component"]);
   const restored = restoreModelEntities(JSON.parse(JSON.stringify(entities)), complaint, ["Component"]);
   assert.deepEqual(restored[0].originalOutput, entities[0].originalOutput);
-  assert.equal(aggregateEntityExtractions([{ model: ENTITY_MODELS[0], entities: restored }])[0].confidenceTotal, 9);
   assert.throws(() => restoreModelEntities([{ ...entities[0], text: "missing" }], complaint, ["Component"]), /offsets/);
-});
-
-test("sums model confidence only when models agree on a category and exact span", () => {
-  const complaint = "Braking action failed.";
-  const entity = (confidence: number, type = "Symptom") => ({
-    ...validateExtraction({
-      entities: [{
-        text: "Braking action", type, confidence, start_offset: 0, end_offset: 14, status: "resolved",
-      }],
-    }, complaint, ["Symptom", "Component"])[0],
-  });
-  const results = aggregateEntityExtractions([
-    { model: ENTITY_MODELS[0], entities: [entity(9)] },
-    { model: ENTITY_MODELS[1], entities: [entity(8)] },
-    { model: ENTITY_MODELS[2], entities: [entity(8), entity(7, "Component")] },
-  ]);
-  assert.equal(results.length, 2);
-  assert.equal(results.find((item) => item.type === "Symptom")?.confidenceTotal, 25);
-  assert.equal(results.find((item) => item.type === "Symptom")?.modelScores[ENTITY_MODELS[2]], 8);
-  assert.equal(results.find((item) => item.type === "Component")?.confidenceTotal, 7);
-  assert.equal(results.find((item) => item.type === "Component")?.modelScores[ENTITY_MODELS[0]], 0);
 });
 
 test("groups repeated phrases by category and confidence group", () => {
   const mentions = [
-    { id: "one", exactText: "braking action", labelId: "symptom", confidenceTotal: 25 },
-    { id: "two", exactText: "braking action", labelId: "symptom", confidenceTotal: 27 },
-    { id: "three", exactText: "braking action", labelId: "symptom", confidenceTotal: 24 },
-    { id: "four", exactText: "braking action", labelId: "component", confidenceTotal: 25 },
+    { id: "one", exactText: "braking action", labelId: "symptom", confidenceScore: 9 },
+    { id: "two", exactText: "braking action", labelId: "symptom", confidenceScore: 10 },
+    { id: "three", exactText: "braking action", labelId: "symptom", confidenceScore: 8 },
+    { id: "four", exactText: "braking action", labelId: "component", confidenceScore: 9 },
   ];
   const groups = groupEntityMentions(mentions);
   assert.deepEqual(groups.map((group) => ({
@@ -301,7 +313,7 @@ test("human correction is validated, recorded, and linked without modifying the 
       findUnique: async () => ({
         id: "mention", status: "PROPOSED", documentId: "doc",
         exactText: "gas", startOffset: 4, endOffset: 7, labelId: "part",
-        confidenceTotal: 16, modelConfidenceScores: { "qwen3.5:4b": 8, "granite4:3b": 8, "gemma4:e4b": 0 },
+        confidenceScore: 8,
         document: { originalText, dataset: { labelSchemaId: "schema" } },
       }),
       updateMany: async ({ data }: { data: Record<string, unknown> }) => { changes.push(data); return { count: 1 }; },
@@ -322,24 +334,22 @@ test("human correction is validated, recorded, and linked without modifying the 
   assert.equal(result.status, "ACCEPTED");
   assert.equal(changes[0].entityId, "entity");
   assert.equal(changes[0].exactText, "gas pedal");
-  assert.equal(changes[0].confidenceTotal, null);
+  assert.equal(changes[0].confidenceScore, null);
   assert.deepEqual(decisions[0].details, {
-    original: { exactText: "gas", startOffset: 4, endOffset: 7, labelId: "part", confidenceTotal: 16,
-      modelConfidenceScores: { "qwen3.5:4b": 8, "granite4:3b": 8, "gemma4:e4b": 0 } },
+    original: { exactText: "gas", startOffset: 4, endOffset: 7, labelId: "part", confidenceScore: 8 },
     corrected: { exactText: "gas pedal", startOffset: 4, endOffset: 13, labelId: "part" },
   });
 
   assert.equal(originalText, "The gas pedal stuck.");
   await applyEntityReview(transaction, { ...input, exactText: "gas", endOffset: 7 });
-  assert.equal("confidenceTotal" in changes[1], false);
-  assert.equal("modelConfidenceScores" in changes[1], false);
+  assert.equal("confidenceScore" in changes[1], false);
 });
 
 test("group decisions update matching pending occurrences without modifying their spans", async () => {
     const document = { originalText: "Toyota and toyota", dataset: { labelSchemaId: "schema" } };
     const rows = [
-      { id: "a", status: "PROPOSED", documentId: "doc", exactText: "Toyota", startOffset: 0, endOffset: 6, labelId: "make", confidenceTotal: 12, modelConfidenceScores: null, document },
-      { id: "b", status: "PROPOSED", documentId: "doc", exactText: "toyota", startOffset: 11, endOffset: 17, labelId: "make", confidenceTotal: 9, modelConfidenceScores: null, document },
+      { id: "a", status: "PROPOSED", documentId: "doc", exactText: "Toyota", startOffset: 0, endOffset: 6, labelId: "make", confidenceScore: 8, document },
+      { id: "b", status: "PROPOSED", documentId: "doc", exactText: "toyota", startOffset: 11, endOffset: 17, labelId: "make", confidenceScore: 8, document },
     ];
     const changes: Array<{ id: string; data: Record<string, unknown> }> = [];
     const transaction = {

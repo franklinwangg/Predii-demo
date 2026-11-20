@@ -1,0 +1,797 @@
+{
+  "model": "qwen3.5:4b",
+  "source": "complaint_summaries.txt",
+  "complaintCount": 30,
+  "successfulExtractions": 28,
+  "failedExtractions": 2,
+  "complaints": [
+    {
+      "complaintId": "11316484",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "2005 toyota prius brake actuator/ fluid accumulator",
+          "category": "Component"
+        },
+        {
+          "text": "brake actuator/ fluid accumulator",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11330515",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "brakes",
+          "category": "Component"
+        },
+        {
+          "text": "brakes",
+          "category": "Component"
+        },
+        {
+          "text": "brakes",
+          "category": "Component"
+        },
+        {
+          "text": "brakes",
+          "category": "Component"
+        },
+        {
+          "text": "car",
+          "category": "Component"
+        },
+        {
+          "text": "car",
+          "category": "Component"
+        },
+        {
+          "text": "rear end",
+          "category": "Component"
+        },
+        {
+          "text": "abs",
+          "category": "Component"
+        },
+        {
+          "text": "brake lights",
+          "category": "Component"
+        },
+        {
+          "text": "maintenance  required",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "srs airbag light",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "master alarm buzzer",
+          "category": "Component"
+        },
+        {
+          "text": "brakes engaged without hitting the brake causes rim to overheat and brake fluid gets extremely hot",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "tap on  the brakes they will lock up and you will go sliding sideways or tap the brakes and they straight to the floor",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "brake actuator starts whining noise and won't go off even if the car is turned off",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11353836",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "2005 toyota prius",
+          "category": "Component"
+        },
+        {
+          "text": "abs",
+          "category": "Component"
+        },
+        {
+          "text": "abs",
+          "category": "Component"
+        },
+        {
+          "text": "brake lights",
+          "category": "Component"
+        },
+        {
+          "text": "12v battery",
+          "category": "Component"
+        },
+        {
+          "text": "brake fluid levels",
+          "category": "Component"
+        },
+        {
+          "text": "abs actuator",
+          "category": "Component"
+        },
+        {
+          "text": "front brake pads",
+          "category": "Component"
+        },
+        {
+          "text": "rotors",
+          "category": "Component"
+        },
+        {
+          "text": "tsb",
+          "category": "Component"
+        },
+        {
+          "text": "gen 3 prius models",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11362777",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "2 recalls not completed",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11384908",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "head light",
+          "category": "Component"
+        },
+        {
+          "text": "intermittent",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "2006",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11396384",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "vehicle in motion at lower speeds usually below 10 miles per hour, which is when the friction brakes kick in as you coming to a stop. the issue is that the friction brakes come in and lock up way too hard even though the pressure on the pedal has not changed. this causes the car to skid and/or buck, not stopping as effectively, making it more likely to cause an accident. the issue seems to be more prevalent with the rear drum brakes but the front disk brakes also contribute to it.",
+          "category": "Component"
+        },
+        {
+          "text": "friction brakes",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "friction brakes",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "rear drum brakes",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "front disk brakes",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11398512",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "cold weather",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "car",
+          "category": "Component"
+        },
+        {
+          "text": "car",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11404857",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "brake pedal",
+          "category": "Component"
+        },
+        {
+          "text": "brake warning light",
+          "category": "Component"
+        },
+        {
+          "text": "brake actuator",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11406976",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "car stopped accelerating/ engine died while driving at 20-30 mph exiting holland tunnel",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "coasted, then braked to stop, pulling over to shoulder",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "red warning light on",
+          "category": "Component"
+        },
+        {
+          "text": "ac warning light?",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11414753",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "actuator",
+          "category": "Component"
+        },
+        {
+          "text": "brake system",
+          "category": "Component"
+        },
+        {
+          "text": "abs",
+          "category": "Component"
+        },
+        {
+          "text": "brake",
+          "category": "Component"
+        },
+        {
+          "text": "brake",
+          "category": "Component"
+        },
+        {
+          "text": "vsc lights",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11432759",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "suv",
+          "category": "Component"
+        },
+        {
+          "text": "suv",
+          "category": "Component"
+        },
+        {
+          "text": "suv",
+          "category": "Component"
+        },
+        {
+          "text": "prius",
+          "category": "Component"
+        },
+        {
+          "text": "prius",
+          "category": "Component"
+        },
+        {
+          "text": "seatbelt",
+          "category": "Component"
+        },
+        {
+          "text": "seatbelt",
+          "category": "Component"
+        },
+        {
+          "text": "airbags",
+          "category": "Component"
+        },
+        {
+          "text": "airbags",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11439482",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "2005 toyota prius",
+          "category": "Component"
+        },
+        {
+          "text": "instrument panel failed to light up or show any electrical functions",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "not knowing the speed, mileage, fuel level, or engine performance",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "approximately 129,000",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11457000",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "2005 toyota prius",
+          "category": "Component"
+        },
+        {
+          "text": "instrument panel",
+          "category": "Component"
+        },
+        {
+          "text": "failure",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "failure",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "failure",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11458514",
+      "status": "failed",
+      "extractedEntities": [],
+      "error": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"toyota prius's\""
+    },
+    {
+      "complaintId": "11479695",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "fuel pump malfunctioned",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "vehicle stalled at low speeds while driving on an incline",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "large red exclamation error sign",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "stopped accelerating and came to a stop",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "engine will not start anymore",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "fuel pump",
+          "category": "Component"
+        },
+        {
+          "text": "fuel pump",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11506504",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "heavy trafficed area",
+          "category": "Component"
+        },
+        {
+          "text": "car eccellerated on its own",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "brake",
+          "category": "Component"
+        },
+        {
+          "text": "20 miles per hour",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11509394",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "2005 prius",
+          "category": "Component"
+        },
+        {
+          "text": "gen 3 prius",
+          "category": "Component"
+        },
+        {
+          "text": "antilock braking",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "traction control systems",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11521924",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "red triangle",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "engine repair light",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "water pump",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11544891",
+      "status": "failed",
+      "extractedEntities": [],
+      "error": "The LLM returned a duplicate extraction."
+    },
+    {
+      "complaintId": "11547686",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "steering wheel",
+          "category": "Component"
+        },
+        {
+          "text": "clockspring mechanism",
+          "category": "Component"
+        },
+        {
+          "text": "flex cable",
+          "category": "Component"
+        },
+        {
+          "text": "airbag's electrical lines",
+          "category": "Component"
+        },
+        {
+          "text": "corroded line",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "fire the airbag",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11582441",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "prius",
+          "category": "Component"
+        },
+        {
+          "text": "braking systems",
+          "category": "Component"
+        },
+        {
+          "text": "soft brake pedal",
+          "category": "Component"
+        },
+        {
+          "text": "toyota",
+          "category": "Component"
+        },
+        {
+          "text": "brake pump",
+          "category": "Component"
+        },
+        {
+          "text": "over 15 years",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "kill any driver",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "paying off a few repair jobs",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "$4000 to replace a brake pump",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "150k miles",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11593182",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "toyota hybrids",
+          "category": "Component"
+        },
+        {
+          "text": "abs actuator",
+          "category": "Component"
+        },
+        {
+          "text": "brakes",
+          "category": "Component"
+        },
+        {
+          "text": "brakes",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11596913",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "2005 toyota prius",
+          "category": "Component"
+        },
+        {
+          "text": "brakes seized",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "squealing sound",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "abs warning light illuminated",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "parking brake",
+          "category": "Component"
+        },
+        {
+          "text": "odometer was inoperable",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "299,999",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11608878",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "brake actuator",
+          "category": "Component"
+        },
+        {
+          "text": "safety",
+          "category": "Component"
+        },
+        {
+          "text": "brakes",
+          "category": "Component"
+        },
+        {
+          "text": "abs",
+          "category": "Component"
+        },
+        {
+          "text": "tpms",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11648968",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "brake warning lights",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "brake actuator",
+          "category": "Component"
+        },
+        {
+          "text": "brake actuator",
+          "category": "Component"
+        },
+        {
+          "text": "brake actuator",
+          "category": "Component"
+        },
+        {
+          "text": "05 prius",
+          "category": "Component"
+        },
+        {
+          "text": "toyota prius",
+          "category": "Component"
+        },
+        {
+          "text": "braking system",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11658429",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "2005 toyota prius",
+          "category": "Component"
+        },
+        {
+          "text": "2005 toyota prius",
+          "category": "Component"
+        },
+        {
+          "text": "airbag",
+          "category": "Component"
+        },
+        {
+          "text": "airbag",
+          "category": "Component"
+        },
+        {
+          "text": "airbag",
+          "category": "Component"
+        },
+        {
+          "text": "airbag",
+          "category": "Component"
+        },
+        {
+          "text": "airbag",
+          "category": "Component"
+        },
+        {
+          "text": "airbag",
+          "category": "Component"
+        },
+        {
+          "text": "airbag",
+          "category": "Component"
+        },
+        {
+          "text": "front-end collision",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "rear-ended another vehicle",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "driver-side airbag failed to deploy",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "roseville toyota",
+          "category": "Component"
+        }
+      ]
+    },
+    {
+      "complaintId": "11698502",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "2005 toyota prius",
+          "category": "Component"
+        },
+        {
+          "text": "turn signals were inoperable",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11698556",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "2005 toyota prius",
+          "category": "Component"
+        },
+        {
+          "text": "left turn signal",
+          "category": "Component"
+        },
+        {
+          "text": "left turn signal",
+          "category": "Component"
+        },
+        {
+          "text": "four-way flashers",
+          "category": "Component"
+        },
+        {
+          "text": "computer failure",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11710245",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "abs actuator",
+          "category": "Component"
+        },
+        {
+          "text": "braking action",
+          "category": "Failure Mode"
+        }
+      ]
+    },
+    {
+      "complaintId": "11718280",
+      "status": "success",
+      "extractedEntities": [
+        {
+          "text": "eingen faliur acording to dealership toyota of anthioc",
+          "category": "Failure Mode"
+        },
+        {
+          "text": "engine faliure",
+          "category": "Failure Mode"
+        }
+      ]
+    }
+  ]
+}

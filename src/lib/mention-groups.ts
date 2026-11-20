@@ -4,7 +4,7 @@ export type GroupableMention = {
   id: string;
   exactText: string;
   labelId: string;
-  confidenceTotal: number | null;
+  confidenceScore: number | null;
 };
 
 export function phraseKey(text: string): string {
@@ -33,9 +33,9 @@ export function groupMentions<T extends GroupableMention>(mentions: T[]) {
   }
   return [...groups.values()].map((items) => ({
     mentions: items,
-    level: items.some((item) => item.confidenceTotal !== null && !isConfidentEntity(item.confidenceTotal))
+    level: items.some((item) => item.confidenceScore !== null && !isConfidentEntity(item.confidenceScore))
       ? "low" as const
-      : items.some((item) => item.confidenceTotal === null)
+      : items.some((item) => item.confidenceScore === null || item.confidenceScore > 10)
         ? "unscored" as const
         : "high" as const,
   }));

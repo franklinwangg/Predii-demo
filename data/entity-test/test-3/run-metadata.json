@@ -1,0 +1,51 @@
+{
+  "model": "gemma4:e4b",
+  "promptId": 3,
+  "promptName": "Failure-mode exclusions",
+  "complaintCount": 30,
+  "categories": [
+    "Component",
+    "Failure Mode"
+  ],
+  "extractionPromptFile": "gemma4-extraction-prompt-3.txt",
+  "extractionPromptSha256": "8d597871280ff3df478477f18e0357834dc835f2d9cbd37d862d662b8a0a4ec2",
+  "inputs": [
+    "complaint_summaries.txt",
+    "entity-labels.json"
+  ],
+  "evaluationMethod": "Per-complaint one-to-one, category-aware token Dice matching at 0.50; micro-averaged.",
+  "outputEntityTextCase": "lowercase",
+  "startedAt": "2026-11-19T23:07:21.114Z",
+  "completedAt": "2026-11-19T23:11:18.300Z",
+  "modelCalls": 31,
+  "retryCalls": 1,
+  "failedComplaints": 1,
+  "metrics": {
+    "Components": {
+      "precision": 0.8297872340425532,
+      "recall": 0.3786407766990291,
+      "f1": 0.52,
+      "truePositives": 39,
+      "falsePositives": 8,
+      "falseNegatives": 64
+    },
+    "Failure Modes": {
+      "precision": 0.8026315789473685,
+      "recall": 0.6703296703296703,
+      "f1": 0.7305389221556886,
+      "truePositives": 61,
+      "falsePositives": 15,
+      "falseNegatives": 30
+    },
+    "Overall": {
+      "precision": 0.8130081300813008,
+      "recall": 0.5154639175257731,
+      "f1": 0.6309148264984227,
+      "truePositives": 100,
+      "falsePositives": 23,
+      "falseNegatives": 94
+    }
+  },
+  "incorrectPredictions": 23,
+  "missedPredictions": 94
+}

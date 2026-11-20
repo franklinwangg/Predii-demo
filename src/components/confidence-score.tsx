@@ -1,18 +1,13 @@
-import { ENTITY_MODEL_NAMES, isConfidentEntity } from "@/lib/entity-confidence";
+import { isConfidentEntity } from "@/lib/entity-confidence";
 
-export function ConfidenceScore({ total, scores }: {
-  total: number | null;
-  scores?: Record<string, number> | null;
+export function ConfidenceScore({ score, model }: {
+  score: number | null;
+  model: string;
 }) {
-  if (total === null) {
-    return <div className="confidence-score confidence-unscored">Ensemble confidence: Not scored</div>;
+  if (score === null || score < 1 || score > 10) {
+    return <div className="confidence-score confidence-unscored">Model confidence: Not scored</div>;
   }
-  return <div className={`confidence-score ${isConfidentEntity(total) ? "confidence-high" : "confidence-low"}`}>
-    <strong>Ensemble confidence: {total}/30 · {isConfidentEntity(total) ? "High" : "Low"}</strong>
-    {scores && <div className="model-score-list">
-      {ENTITY_MODEL_NAMES.map((model) => <span key={model}>
-        {model}: {scores[model] === 0 ? "No matching vote (0)" : typeof scores[model] === "number" ? `${scores[model]}/10` : "Unavailable"}
-      </span>)}
-    </div>}
+  return <div className={`confidence-score ${isConfidentEntity(score) ? "confidence-high" : "confidence-low"}`}>
+    <strong>{model} confidence: {score}/10 · {isConfidentEntity(score) ? "High" : "Needs review"}</strong>
   </div>;
 }

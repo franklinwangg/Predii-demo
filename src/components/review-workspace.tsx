@@ -26,7 +26,7 @@ import { getWords, moveWordSelection, wordSelectionFromRange } from "@/lib/word-
 import type { WordSelection } from "@/lib/word-selection";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 
-type PendingAnnotation = Omit<Annotation, "documentId" | "createdBy" | "createdByType" | "status" | "confidenceTotal" | "modelConfidenceScores"> & {
+type PendingAnnotation = Omit<Annotation, "documentId" | "createdBy" | "createdByType" | "status" | "confidenceScore"> & {
   id: string;
   pending: true;
 };
@@ -112,9 +112,9 @@ export function ReviewWorkspace({ documentId }: { documentId: string }) {
   const standaloneHuman = humanAnnotations.filter((annotation) => !aiGroups.some((group) =>
     group.mentions.some((mention) => mention.id === annotation.id)));
   const annotationSections = [
-    { title: "High confidence", description: "25–30/30", groups: aiGroups.filter((group) => group.level === "high") },
-    { title: "Low confidence", description: "Below 25/30 · needs review", groups: aiGroups.filter((group) => group.level === "low") },
-    { title: "Not scored", description: "No ensemble score", groups: aiGroups.filter((group) => group.level === "unscored") },
+    { title: "High confidence", description: "9–10/10", groups: aiGroups.filter((group) => group.level === "high") },
+    { title: "Low confidence", description: "Below 9/10 · needs review", groups: aiGroups.filter((group) => group.level === "low") },
+    { title: "Not scored", description: "No individual model score", groups: aiGroups.filter((group) => group.level === "unscored") },
   ];
   const progressPercent = document ? Math.round(sequence.position / Math.max(sequence.total, 1) * 100) : 0;
 
@@ -400,7 +400,7 @@ export function ReviewWorkspace({ documentId }: { documentId: string }) {
                   {mentions.some((item) => item.knownEntity) && <div className="known-entity-badge">Known entity: {mentions.find((item) => item.knownEntity)?.knownEntity}</div>}
                   {mentions.length > 1 && <p>Review matching occurrences together in Entity review.</p>}
                   {mentions.filter((item) => item.createdByType === "AI").length > 1 && <p>AI occurrence scores: {mentions.filter((item) => item.createdByType === "AI").map((item) =>
-                    item.confidenceTotal === null ? "Not scored" : `${item.confidenceTotal}/30`).join(", ")}</p>}
+                    item.confidenceScore === null ? "Not scored" : `${item.confidenceScore}/10`).join(", ")}</p>}
                   <details><summary>{mentions.length > 1 ? "View individual occurrences" : "View annotation"}</summary>
                     {mentions.map((annotation) => <AnnotationRow
                       key={annotation.id}
@@ -411,7 +411,7 @@ export function ReviewWorkspace({ documentId }: { documentId: string }) {
                       onFocus={() => focusAnnotation(annotation)}
                     />)}
                   </details>
-                  {mentions.length === 1 && <ConfidenceScore total={mentions[0].confidenceTotal} scores={mentions[0].modelConfidenceScores} />}
+                  {mentions.length === 1 && <ConfidenceScore score={mentions[0].confidenceScore} model={mentions[0].createdBy} />}
                 </div>)}
             </section>)}
             <section className="annotation-confidence-section" aria-label="Human annotations and drafts">
@@ -471,7 +471,7 @@ function AnnotationRow({ annotation, labels, onChange, onRemove, onFocus }: {
         <span className="offset-hint">{annotation.startOffset}–{annotation.endOffset}</span>
       </div>
       {"createdByType" in annotation && annotation.createdByType === "AI" &&
-        <ConfidenceScore total={annotation.confidenceTotal} scores={annotation.modelConfidenceScores} />}
+        <ConfidenceScore score={annotation.confidenceScore} model={annotation.createdBy} />}
     </div>
   );
 }

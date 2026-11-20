@@ -244,8 +244,7 @@ export async function listAnnotationsByLabel(options: {
         createdBy: true,
         createdByType: true,
         status: true,
-        confidenceTotal: true,
-        modelConfidenceScores: true,
+        confidenceScore: true,
         document: {
           select: {
             id: true,
@@ -295,8 +294,7 @@ export async function listUniqueAnnotationPhrases(options: {
         createdBy: string;
         createdByType: "HUMAN" | "AI";
         status: "PROPOSED" | "ACCEPTED" | "REJECTED";
-        confidenceTotal: number | null;
-        modelConfidenceScores: Prisma.JsonValue;
+        confidenceScore: number | null;
         occurrenceCount: number;
         documentId: string;
         sourceId: string;
@@ -314,7 +312,7 @@ export async function listUniqueAnnotationPhrases(options: {
             AND (${datasetId}::text IS NULL OR d."datasetId" = ${datasetId})
         )
         SELECT r.id, r."exactText", r."startOffset", r."endOffset", r."createdBy",
-          r."createdByType", r.status, r."confidenceTotal", r."modelConfidenceScores", r."occurrenceCount", d.id AS "documentId",
+          r."createdByType", r.status, r."confidenceScore", r."occurrenceCount", d.id AS "documentId",
           d."sourceId", d."vehicleMake", d."vehicleModel", d."vehicleYear", ds.name AS "datasetName"
         FROM ranked r
         JOIN "Document" d ON d.id = r."documentId"
@@ -500,7 +498,7 @@ export async function updateAnnotation(
           ? { termId: term?.id ?? null, entityId: term?.alias?.entityId ?? null }
           : {}),
         ...(patch.labelId && patch.labelId !== annotation.labelId
-          ? { confidenceTotal: null, modelConfidenceScores: Prisma.DbNull }
+          ? { confidenceScore: null }
           : {}),
       },
       include: { label: { select: { id: true, name: true, color: true } } },

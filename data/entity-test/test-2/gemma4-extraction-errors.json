@@ -1,0 +1,59 @@
+{
+  "model": "gemma4:e4b",
+  "completedComplaintIds": [
+    "11316484",
+    "11330515",
+    "11353836",
+    "11362777",
+    "11384908",
+    "11396384",
+    "11398512",
+    "11404857",
+    "11406976",
+    "11414753",
+    "11432759",
+    "11439482",
+    "11457000",
+    "11458514",
+    "11479695",
+    "11506504",
+    "11509394",
+    "11521924",
+    "11544891",
+    "11547686",
+    "11582441",
+    "11593182",
+    "11596913",
+    "11608878",
+    "11648968",
+    "11658429",
+    "11698502",
+    "11698556",
+    "11710245",
+    "11718280"
+  ],
+  "failures": [
+    {
+      "complaintId": "11596913",
+      "error": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"odometer failed to display the correct mileage\"",
+      "retryError": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"odometer failed to display the correct mileage\""
+    },
+    {
+      "complaintId": "11608878",
+      "error": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"brakes sometimes don't work at all for a couple of seconds\"",
+      "retryError": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"brakes sometimes don't work at all for a couple of seconds\""
+    }
+  ],
+  "retries": [
+    {
+      "complaintId": "11596913",
+      "outcome": "failed",
+      "error": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"odometer failed to display the correct mileage\""
+    },
+    {
+      "complaintId": "11608878",
+      "outcome": "failed",
+      "error": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"brakes sometimes don't work at all for a couple of seconds\""
+    }
+  ]
+}

@@ -15,8 +15,7 @@ type Mention = {
   labelId: string;
   createdBy: string;
   status: "PROPOSED" | "ACCEPTED";
-  confidenceTotal: number | null;
-  modelConfidenceScores: Record<string, number> | null;
+  confidenceScore: number | null;
   label: Label;
   knownEntity: string | null;
 };
@@ -70,7 +69,7 @@ export function EntityReview() {
   return <div className="page-wrap">
     <div className="page-heading">
       <div><div className="eyebrow">DATA OPERATIONS · ENTITY EXTRACTION</div><h1>Entity review</h1>
-        <p>Labels are grouped by their three-model confidence total. Totals of 25/30 or higher are high confidence; lower totals need human review.</p></div>
+        <p>Labels are grouped by individual model confidence. Scores of 9/10 or higher are high confidence; lower scores need human review.</p></div>
       <button className="button button-secondary" onClick={refresh} disabled={loading || refreshing}><RefreshCw size={15} /> Refresh scores</button>
     </div>
     {error && <div className="alert alert-error" role="alert"><CircleAlert size={18} />{error}</div>}
@@ -91,13 +90,13 @@ export function EntityReview() {
         </div>
         <ConfidenceSection
           title="High confidence"
-          description="Total scores of 25–30 out of 30"
+          description="Model scores of 9–10 out of 10"
           groups={groupMentions(result.document.annotations).filter((group) => group.level === "high")}
           originalText={result.document.originalText}
         />
         <ConfidenceSection
           title="Low confidence"
-          description="Total scores below 25 out of 30; human review required"
+          description="Model scores below 9 out of 10; human review required"
           groups={groupMentions(result.document.annotations).filter((group) => group.level === "low")}
           labels={result.document.dataset.labelSchema.labels}
           originalText={result.document.originalText}
@@ -106,7 +105,7 @@ export function EntityReview() {
         />
         <ConfidenceSection
           title="Not scored"
-          description="Older labels without an ensemble score; human review required"
+          description="Older labels without an individual model score; human review required"
           groups={groupMentions(result.document.annotations).filter((group) => group.level === "unscored")}
           labels={result.document.dataset.labelSchema.labels}
           originalText={result.document.originalText}
@@ -142,12 +141,12 @@ function ConfidenceSection({ title, description, groups, labels, originalText, o
           </div>
           {group.mentions.map((mention, index) => <div key={mention.id}>
             {group.mentions.length > 1 && <span className="confidence-occurrence">Occurrence {index + 1}</span>}
-            <ConfidenceScore total={mention.confidenceTotal} scores={mention.modelConfidenceScores} />
+            <ConfidenceScore score={mention.confidenceScore} model={mention.createdBy} />
           </div>)}
           <details className="mention-occurrences">
             <summary>Occurrence details</summary>
             {group.mentions.map((mention, index) => <div className="mention-occurrence" key={mention.id}>
-              <div className="eyebrow">OCCURRENCE {index + 1} · {mention.confidenceTotal === null ? "NOT SCORED" : `${mention.confidenceTotal}/30`} · OFFSETS {mention.startOffset}–{mention.endOffset}</div>
+              <div className="eyebrow">OCCURRENCE {index + 1} · {mention.confidenceScore === null ? "NOT SCORED" : `${mention.confidenceScore}/10`} · OFFSETS {mention.startOffset}–{mention.endOffset}</div>
             </div>)}
           </details>
           {labels && originalText && onReviewed && group.mentions.some((mention) => mention.status === "PROPOSED") && <MentionReview
@@ -207,7 +206,7 @@ function MentionReview({ mention, occurrences, labels, originalText, onReviewed,
   }
 
   return <div className="entity-review-fields-wrap">
-    <div className="eyebrow">AI ENSEMBLE · {mention.createdBy} · {mention.confidenceTotal === null ? "NOT SCORED" : `${mention.confidenceTotal}/30`}</div>
+    <div className="eyebrow">AI MODEL · {mention.createdBy} · {mention.confidenceScore === null ? "NOT SCORED" : `${mention.confidenceScore}/10`}</div>
     {findPhraseOccurrences(originalText, mention.exactText).length > 1 && <p>Decisions apply to all {occurrences.length} pending occurrences. Accepting also labels other matching occurrences; existing decisions are preserved. Text or offset corrections apply only to this occurrence.</p>}
     {error && <div className="alert alert-error" role="alert">{error}</div>}
     <div className="entity-review-fields">

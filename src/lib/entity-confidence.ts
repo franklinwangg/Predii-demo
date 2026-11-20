@@ -1,14 +1,14 @@
-export const ENTITY_CONFIDENCE_THRESHOLD = 25;
+export const ENTITY_CONFIDENCE_THRESHOLD = 9;
 export const ENTITY_MODEL_NAMES = ["qwen3.5:4b", "gemma4:e4b", "granite4:3b"] as const;
 
-export function isConfidentEntity(confidenceTotal: number | null): boolean {
-  return confidenceTotal !== null && confidenceTotal >= ENTITY_CONFIDENCE_THRESHOLD;
+export function isConfidentEntity(confidenceScore: number | null): boolean {
+  return confidenceScore !== null && confidenceScore >= ENTITY_CONFIDENCE_THRESHOLD && confidenceScore <= 10;
 }
 
 export type EntityMentionForGrouping = {
   exactText: string;
   labelId: string;
-  confidenceTotal: number | null;
+  confidenceScore: number | null;
 };
 
 export type EntityMentionGroup<T extends EntityMentionForGrouping> = {
@@ -21,7 +21,7 @@ export type EntityMentionGroup<T extends EntityMentionForGrouping> = {
 export function groupEntityMentions<T extends EntityMentionForGrouping>(mentions: T[]): EntityMentionGroup<T>[] {
   const groups = new Map<string, EntityMentionGroup<T>>();
   for (const mention of mentions) {
-    const confident = isConfidentEntity(mention.confidenceTotal);
+    const confident = isConfidentEntity(mention.confidenceScore);
     const key = `${mention.labelId}\0${mention.exactText}\0${confident}`;
     const group = groups.get(key);
     if (group) {

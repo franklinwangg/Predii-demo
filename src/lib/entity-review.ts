@@ -9,11 +9,11 @@ import { normalizeTerm } from "@/lib/synonym-logic";
 const reviewableAnnotations = {
   OR: [
     { status: "PROPOSED" as const },
-    { status: "ACCEPTED" as const, confidenceTotal: { gte: 25 } },
+    { status: "ACCEPTED" as const, confidenceScore: { gte: 9, lte: 10 } },
     {
       status: "ACCEPTED" as const,
       createdByType: "AI" as const,
-      confidenceTotal: null,
+      confidenceScore: null,
       reviewDecisions: { none: {} },
     },
   ],
@@ -161,7 +161,7 @@ export async function applyEntityReview(tx: Prisma.TransactionClient, input: Ent
         status: input.action === "accept" ? "ACCEPTED" : "REJECTED",
         ...(input.exactText !== annotation.exactText || input.startOffset !== annotation.startOffset ||
           input.endOffset !== annotation.endOffset || input.labelId !== annotation.labelId
-          ? { confidenceTotal: null, modelConfidenceScores: Prisma.DbNull }
+          ? { confidenceScore: null }
           : {}),
       },
     });
@@ -177,8 +177,7 @@ export async function applyEntityReview(tx: Prisma.TransactionClient, input: Ent
             startOffset: annotation.startOffset,
             endOffset: annotation.endOffset,
             labelId: annotation.labelId,
-            confidenceTotal: annotation.confidenceTotal,
-            modelConfidenceScores: annotation.modelConfidenceScores,
+            confidenceScore: annotation.confidenceScore,
           },
           corrected: {
             exactText: input.exactText,

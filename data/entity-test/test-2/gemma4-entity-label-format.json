@@ -1,0 +1,298 @@
+{
+  "11316484": {
+    "components": [
+      "brake actuator/ fluid accumulator"
+    ],
+    "failure_modes": [
+      "can lead to a total loss of braking on the vehicle"
+    ]
+  },
+  "11330515": {
+    "components": [
+      "brakes",
+      "brakes",
+      "brakes",
+      "brakes",
+      "rim",
+      "brake fluid",
+      "abs",
+      "brake lights",
+      "brake actuator"
+    ],
+    "failure_modes": [
+      "car won't stop",
+      "rear end makes noise and raises up",
+      "abs and brake lights are one",
+      "maintenance  required and srs airbag light",
+      "master alarm buzzer is on and won't go off",
+      "brakes engaged without hitting the brake causes rim to overheat",
+      "brake fluid gets extremely hot",
+      "sometimes when tap on  the brakes they will lock up and you will go sliding sideways",
+      "tap the brakes and they straight to the floor",
+      "brake actuator starts whining noise and won't go off even if the car is turned off"
+    ]
+  },
+  "11353836": {
+    "components": [
+      "abs",
+      "abs",
+      "brake lights",
+      "brake fluid",
+      "front brake pads",
+      "rotors"
+    ],
+    "failure_modes": [
+      "brakes became spongy upon startup",
+      "abs actuator had failed",
+      "destroying front brake pads and rotors at same time"
+    ]
+  },
+  "11362777": {
+    "components": [],
+    "failure_modes": []
+  },
+  "11384908": {
+    "components": [
+      "head light"
+    ],
+    "failure_modes": [
+      "head light are intermittent"
+    ]
+  },
+  "11396384": {
+    "components": [
+      "friction brakes",
+      "friction brakes",
+      "rear drum brakes",
+      "front disk brakes"
+    ],
+    "failure_modes": [
+      "friction brakes come in and lock up way too hard",
+      "the car to skid and/or buck"
+    ]
+  },
+  "11398512": {
+    "components": [],
+    "failure_modes": [
+      "will not stay in the gear",
+      "starts to warm up then the car may sometimes stay in gear"
+    ]
+  },
+  "11404857": {
+    "components": [
+      "brake pedal",
+      "brake warning light",
+      "brake actuator"
+    ],
+    "failure_modes": [
+      "brake pedal was depressed in anticipation to stop the vehicle"
+    ]
+  },
+  "11406976": {
+    "components": [],
+    "failure_modes": [
+      "car stopped accelerating/ engine died while driving at 20-30 mph exiting holland tunnel",
+      "red warning light on"
+    ]
+  },
+  "11414753": {
+    "components": [
+      "actuator on my brake system"
+    ],
+    "failure_modes": [
+      "abs, brake, and vsc lights illuminated"
+    ]
+  },
+  "11432759": {
+    "components": [
+      "driver side seatbelt engaged",
+      "passenger side seatbelt did not"
+    ],
+    "failure_modes": [
+      "hit the breaks very hard and fast but could not stop",
+      "front end of the prius lodged under the back end of the suv",
+      "airbags failed to deploy",
+      "smell an odor from the dust from the airbags"
+    ]
+  },
+  "11439482": {
+    "components": [],
+    "failure_modes": [
+      "instrument panel failed to light up or show any electrical functions",
+      "not knowing the speed, mileage, fuel level, or engine performance while driving"
+    ]
+  },
+  "11457000": {
+    "components": [
+      "instrument panel"
+    ],
+    "failure_modes": [
+      "instrument panel was inoperable"
+    ]
+  },
+  "11458514": {
+    "components": [
+      "abs control module/actuator"
+    ],
+    "failure_modes": [
+      "multiple lights came on (abs, vsc, & brake)",
+      "brakes became hard to push at times and didn’t feel normal",
+      "warning lights went away and brakes were normal again",
+      "the lights came back on and a constant alarm started sounding",
+      "the brake system failed",
+      "the vehicle was super hard to stop",
+      "it took pumping of the brakes and full force on the pedal to bring it to a stop"
+    ]
+  },
+  "11479695": {
+    "components": [
+      "fuel pump",
+      "fuel pump"
+    ],
+    "failure_modes": [
+      "fuel pump malfunctioned",
+      "the vehicle stalled at low speeds while driving on an incline",
+      "gave a large red exclamation error sign on the dashboard",
+      "stopped accelerating and came to a stop",
+      "the engine will not start anymore",
+      "fuel pump to be faulty"
+    ]
+  },
+  "11506504": {
+    "components": [],
+    "failure_modes": [
+      "my car eccellerated on its own",
+      "the car did not respond",
+      "simply kept driving at around 20 miles per hour"
+    ]
+  },
+  "11509394": {
+    "components": [
+      "antilock braking and traction control systems"
+    ],
+    "failure_modes": [
+      "traction control kicks in; however, on this car, traction control immediately cuts all motive power to the drive wheels, leaving the driver vulnerable to getting hit from behind",
+      "it cuts in and out until the car decides it has enough traction to proceed",
+      "when the anti-lock system initiates, the brakes simply cut out, and the car jumps ahead, until they grab, then loose again immediately, with multiple lurches, and sometimes just no brakes at all available"
+    ]
+  },
+  "11521924": {
+    "components": [
+      "water pump"
+    ],
+    "failure_modes": [
+      "red triangle keeps coming on with engine repair light"
+    ]
+  },
+  "11544891": {
+    "components": [
+      "abs brake actuator",
+      "abs brake actuator"
+    ],
+    "failure_modes": [
+      "it is failing again",
+      "abs brake actuator fail"
+    ]
+  },
+  "11547686": {
+    "components": [
+      "buttons on the steering wheel",
+      "clockspring mechanism inside the whweel",
+      "the fourth line is one of the airbag's electrical lines"
+    ],
+    "failure_modes": [
+      "lost functionality for some buttons on the steering wheel",
+      "four of the lines in the flex cable are impacted by corrosion",
+      "three have already failed",
+      "airbag would be next impacted by this failure",
+      "corroded line could fail during the vehicle's attempt to fire the airbag on the wheel"
+    ]
+  },
+  "11582441": {
+    "components": [
+      "braking systems",
+      "brake pump"
+    ],
+    "failure_modes": [
+      "defaulting to soft brake pedal"
+    ]
+  },
+  "11593182": {
+    "components": [
+      "abs actuator"
+    ],
+    "failure_modes": [
+      "abs actuator which control the brakes isn't safe to drive around when not functioning right",
+      "brakes sometimes is floored to the ground with minimal stoppage"
+    ]
+  },
+  "11596913": {
+    "components": [],
+    "failure_modes": []
+  },
+  "11608878": {
+    "components": [],
+    "failure_modes": []
+  },
+  "11648968": {
+    "components": [
+      "brake actuator",
+      "brake actuator",
+      "brake actuator"
+    ],
+    "failure_modes": [
+      "brake warning lights pop up on my dash",
+      "brake actuator fail",
+      "vehicle is deemed unsafe with a failed actuator/module"
+    ]
+  },
+  "11658429": {
+    "components": [],
+    "failure_modes": [
+      "driver-side airbag failed to deploy",
+      "severe cognitive symptoms",
+      "confusion",
+      "chronic fatigue",
+      "sudden drowsiness",
+      "memory loss",
+      "extreme mood swings",
+      "airbag system failed"
+    ]
+  },
+  "11698502": {
+    "components": [
+      "turn signals"
+    ],
+    "failure_modes": [
+      "turn signals were inoperable"
+    ]
+  },
+  "11698556": {
+    "components": [
+      "left turn signal",
+      "left turn signal",
+      "four-way flashers"
+    ],
+    "failure_modes": [
+      "left turn signal failed to function as intended",
+      "four-way flashers failed to function as intended",
+      "computer failure"
+    ]
+  },
+  "11710245": {
+    "components": [
+      "abs actuator"
+    ],
+    "failure_modes": [
+      "abs actuator failed",
+      "little to no braking action",
+      "had to swerve to avoid collision on interstate"
+    ]
+  },
+  "11718280": {
+    "components": [],
+    "failure_modes": [
+      "engine faliure"
+    ]
+  }
+}

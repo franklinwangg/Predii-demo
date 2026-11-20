@@ -15,8 +15,7 @@ type SavedAnnotation = {
   createdBy: string;
   createdByType: "HUMAN" | "AI";
   status: "PROPOSED" | "ACCEPTED" | "REJECTED";
-  confidenceTotal: number | null;
-  modelConfidenceScores: Record<string, number> | null;
+  confidenceScore: number | null;
   occurrenceCount: number;
   document: {
     id: string;
@@ -190,7 +189,7 @@ function CategoryAnnotations({ label, datasetId }: { label: Label; datasetId: st
                     <td><span className="id-text">{annotation.document.sourceId}</span></td>
                     <td><span className="vehicle-cell">{annotation.document.dataset.name}</span><small>{annotation.document.vehicleYear} {annotation.document.vehicleMake} {annotation.document.vehicleModel}</small></td>
                     <td><span className="vehicle-cell">{annotation.createdBy} ({annotation.createdByType.toLowerCase()})</span><small>{annotation.status.toLowerCase()}</small>
-                      {annotation.createdByType === "AI" && <ConfidenceScore total={annotation.confidenceTotal} scores={annotation.modelConfidenceScores} />}</td>
+                      {annotation.createdByType === "AI" && <ConfidenceScore score={annotation.confidenceScore} model={annotation.createdBy} />}</td>
                     <td><Link className="row-action" href={`/documents/${annotation.document.id}`}>Open complaint <ArrowRight size={14} /></Link></td>
                   </tr>
                 ))}

@@ -20,8 +20,9 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { apiRequest } from "@/lib/client-api";
-import { runScoringPhases } from "@/lib/scoring-progress";
-import type { ScoringPhase, ScoringResult } from "@/lib/scoring-progress";
+import { ENTITY_MODEL_NAMES } from "@/lib/entity-confidence";
+import { runScoringModel } from "@/lib/scoring-progress";
+import type { ScoringModel, ScoringResult } from "@/lib/scoring-progress";
 import type { Dataset, DocumentSummary } from "@/lib/types";
 
 type StatusFilter = "ALL" | "LABELED" | "UNLABELED";
@@ -41,8 +42,8 @@ type PipelineStats = {
 type ScoringProgress = {
   total: number;
   results: ScoringResult[];
-  phase: ScoringPhase;
-  failures: Array<ScoringResult & { phase: ScoringPhase }>;
+  model: ScoringModel;
+  failures: ScoringResult[];
   status: "running" | "finished" | "stopped";
 };
 
@@ -69,6 +70,7 @@ export function Dashboard() {
   const [pipelineLoading, setPipelineLoading] = useState(false);
   const [pipelineReload, setPipelineReload] = useState(0);
   const [scoringProgress, setScoringProgress] = useState<ScoringProgress | null>(null);
+  const [selectedModel, setSelectedModel] = useState<ScoringModel>(ENTITY_MODEL_NAMES[0]);
   const activeDataset = datasets.find((dataset) => dataset.id === activeDatasetId);
 
   const refreshDocuments = useCallback(async (
@@ -143,33 +145,40 @@ export function Dashboard() {
         const stats = await apiRequest<PipelineStats>(`/api/pipeline/stats?datasetId=${encodeURIComponent(activeDatasetId)}`);
         const { documentIds } = await apiRequest<{ documentIds: string[] }>("/api/pipeline/extract", {
           method: "POST",
-          body: JSON.stringify({ datasetId: activeDatasetId, phase: "select" }),
+          body: JSON.stringify({ datasetId: activeDatasetId, phase: "select", model: selectedModel }),
         });
         const total = documentIds.length;
         setPipeline(stats);
-        let failures: Array<ScoringResult & { phase: ScoringPhase }> = [];
-        let previousPhase: ScoringPhase | null = null;
-        let previousResults: ScoringResult[] = [];
-        const phases = await runScoringPhases(
+        const results = await runScoringModel(
           documentIds,
-          (phase, selectedDocumentIds, excludedDocumentIds) => apiRequest<{ results: ScoringResult[] }>("/api/pipeline/extract", {
+          selectedModel,
+          (model, selectedDocumentIds, excludedDocumentIds) => apiRequest<{ results: ScoringResult[] }>("/api/pipeline/extract", {
             method: "POST",
-            body: JSON.stringify({ datasetId: activeDatasetId, limit: 1, documentIds: selectedDocumentIds, excludedDocumentIds, phase }),
+            body: JSON.stringify({
+              datasetId: activeDatasetId,
+              limit: 1,
+              documentIds: selectedDocumentIds,
+              excludedDocumentIds,
+              model,
+              phase: "run",
+            }),
           }),
-          (phase, nextResults) => {
-            if (previousPhase !== null && previousPhase !== phase) {
-              failures = [...failures, ...previousResults.filter((item) => item.status !== "completed").map((item) => ({ ...item, phase: previousPhase! }))];
-            }
-            previousPhase = phase;
-            previousResults = nextResults;
-            setScoringProgress({ total, phase, results: nextResults, failures, status: "running" });
+          (nextResults) => {
+            setScoringProgress({
+              total,
+              model: selectedModel,
+              results: nextResults,
+              failures: nextResults.filter((item) => item.status !== "completed"),
+              status: "running",
+            });
             setPipelineReload((value) => value + 1);
           },
         );
-        const last = phases[phases.length - 1];
         setScoringProgress({
-          total, phase: last.phase, results: last.results,
-          failures: phases.flatMap(({ phase, results }) => results.filter((item) => item.status !== "completed").map((item) => ({ ...item, phase }))),
+          total,
+          model: selectedModel,
+          results,
+          failures: results.filter((item) => item.status !== "completed"),
           status: "finished",
         });
       } else {
@@ -233,7 +242,7 @@ export function Dashboard() {
         <div>
           <div className="eyebrow">DATA OPERATIONS <span>·</span> NHTSA</div>
           <h1>Automotive knowledge pipeline</h1>
-          <p>Import complaints, score automotive entities with three local models, and review uncertain labels.</p>
+          <p>Import complaints, score automotive entities with one selected local model, and review uncertain labels.</p>
         </div>
         <div className="heading-actions">
           <button className="button button-secondary" disabled={pipelineLoading} onClick={() => setShowCreate(true)}>
@@ -284,10 +293,19 @@ export function Dashboard() {
                 <StatCard label="Pending synonym reviews" value={pipeline.pendingSynonyms} sub="Groups awaiting a human" accent="purple" icon={<Sparkles size={17} />} />
               </div> : <div className="saved-category-message">Pipeline statistics unavailable or loading.</div>}
               <div className="progress-card">
-                <div className="progress-heading"><div><strong>Pipeline actions</strong><span> Entity scoring processes up to three unscored complaints per run with three local models.</span></div></div>
+                <div className="progress-heading"><div><strong>Pipeline actions</strong><span> Run one local model at a time; model outputs are kept separate.</span></div></div>
                 {scoringProgress && <ScoringProgressReport progress={scoringProgress} />}
                 <div className="synonym-actions">
-                  <button className="button button-primary" disabled={pipelineLoading || importing || showCreate} onClick={() => void runPipeline("extract")}>{scoringProgress?.status === "running" ? "Scoring complaints…" : "Score up to 3 complaints (3 models)"}</button>
+                  <label className="select-wrap">
+                    <select aria-label="Select extraction model" value={selectedModel} onChange={(event) => {
+                      const model = ENTITY_MODEL_NAMES.find((name) => name === event.target.value);
+                      if (model) setSelectedModel(model);
+                    }} disabled={pipelineLoading || importing}>
+                      {ENTITY_MODEL_NAMES.map((model) => <option key={model} value={model}>{model}</option>)}
+                    </select>
+                    <ChevronDown size={15} />
+                  </label>
+                  <button className="button button-primary" disabled={pipelineLoading || importing || showCreate} onClick={() => void runPipeline("extract")}>{scoringProgress?.status === "running" ? "Scoring complaints…" : `Score with ${selectedModel}`}</button>
                   <button className="button button-secondary" disabled={pipelineLoading} onClick={() => void runPipeline("synonyms")}>Run synonym resolution</button>
                   <Link className="button button-secondary" href="/entity-review">Review entities</Link>
                   <Link className="button button-secondary" href="/synonyms">Review synonyms</Link>
@@ -379,7 +397,7 @@ export function Dashboard() {
 
 function ScoringProgressReport({ progress }: { progress: ScoringProgress }) {
   const completed = progress.results.filter((result) => result.status === "completed").length;
-  const failed = [...progress.failures, ...(progress.status === "running" ? progress.results.filter((result) => result.status !== "completed").map((result) => ({ ...result, phase: progress.phase })) : [])];
+  const failed = progress.failures;
   const busy = progress.results.filter((result) => result.status === "busy").length;
   const attempted = progress.results.length;
   const max = Math.max(progress.total, attempted);
@@ -387,15 +405,15 @@ function ScoringProgressReport({ progress }: { progress: ScoringProgress }) {
     <div className="scoring-report" role="status" aria-live="polite">
       <div className="scoring-report-heading">
         <strong>{progress.status === "running" ? "Scoring in progress" : progress.status === "stopped" ? "Scoring stopped" : "Scoring pass finished"}</strong>
-        <span>{progress.phase === "compare" ? "Comparing model results" : `Model: ${progress.phase}`} · {attempted} attempted this phase</span>
+        <span>Model: {progress.model} · {attempted} attempted</span>
       </div>
       <progress aria-label="Complaints attempted" value={attempted} max={Math.max(1, max)} />
       <p>{completed} completed this phase · {failed.length} failed or busy across phases{busy ? ` · ${busy} busy this phase` : ""}</p>
-      {progress.status === "running" && <p>Models run one at a time on the selected complaints; confidence scores are calculated after all three passes. Keep this dashboard open.</p>}
-      {progress.status === "finished" && <p>{progress.total === 0 ? "No unscored complaints remain." : "Only complaints with valid results from all three models were scored. Run scoring again for remaining complaints or to retry failed work."}</p>}
+      {progress.status === "running" && <p>This model runs independently on the selected complaints. Keep this dashboard open.</p>}
+      {progress.status === "finished" && <p>{progress.total === 0 ? `No complaints remain for ${progress.model}.` : `${progress.model} scored the selected complaints. Choose another model to evaluate its results independently.`}</p>}
       {failed.length > 0 && <details>
         <summary>Show failed complaints</summary>
-        <ul>{failed.map((result) => <li key={`${result.phase}:${result.documentId}`}><Link href={`/documents/${result.documentId}`}>{result.documentId}</Link> ({result.phase}): {result.error ?? "Claimed elsewhere."}</li>)}</ul>
+        <ul>{failed.map((result) => <li key={`${progress.model}:${result.documentId}`}><Link href={`/documents/${result.documentId}`}>{result.documentId}</Link> ({progress.model}): {result.error ?? "Claimed elsewhere."}</li>)}</ul>
         <p>Run scoring again to retry failed complaints.</p>
       </details>}
     </div>
