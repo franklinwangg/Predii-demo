@@ -1,0 +1,865 @@
+{
+  "11316484": {
+    "entities": [
+      {
+        "text": "BRAKE ACTUATOR",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 18,
+        "endOffset": 32
+      },
+      {
+        "text": "FLUID ACCUMULATOR",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 34,
+        "endOffset": 51
+      },
+      {
+        "text": "TOTAL LOSS OF BRAKING ON THE VEHICLE",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 358,
+        "endOffset": 394
+      }
+    ]
+  },
+  "11330515": {
+    "entities": [
+      {
+        "text": "CAR WON'T STOP",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 32,
+        "endOffset": 46
+      },
+      {
+        "text": "REAR END MAKES NOISE AND RAISES UP",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 55,
+        "endOffset": 89
+      },
+      {
+        "text": "ABS AND BRAKE LIGHTS ARE ONE",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 95,
+        "endOffset": 123
+      },
+      {
+        "text": "MAINTENANCE  REQUIRED AND SRS AIRBAG LIGHT",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 135,
+        "endOffset": 177
+      },
+      {
+        "text": "MASTER ALARM BUZZER IS ON AND WON'T GO OFF",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 183,
+        "endOffset": 225
+      },
+      {
+        "text": "BRAKES ENGAGED WITHOUT HITTING THE BRAKE CAUSES RIM TO OVERHEAT",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 227,
+        "endOffset": 290
+      },
+      {
+        "text": "BRAKE FLUID GETS EXTREMELY HOT",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 295,
+        "endOffset": 325
+      },
+      {
+        "text": "SOMETIMES WHEN TAP ON  THE BRAKES THEY WILL LOCK UP",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 332,
+        "endOffset": 383
+      },
+      {
+        "text": "TAP THE BRAKES AND THEY STRAIGHT TO THE FLOOR",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 420,
+        "endOffset": 465
+      },
+      {
+        "text": "BRAKE ACTUATOR STARTS WHINING NOISE AND WON'T GO OFF EVEN IF THE CAR IS TURNED OFF",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 476,
+        "endOffset": 558
+      },
+      {
+        "text": "BRAKES",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 21,
+        "endOffset": 27
+      },
+      {
+        "text": "BRAKES",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 227,
+        "endOffset": 233
+      },
+      {
+        "text": "BRAKES",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 359,
+        "endOffset": 365
+      },
+      {
+        "text": "BRAKES",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 428,
+        "endOffset": 434
+      },
+      {
+        "text": "ABS",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 95,
+        "endOffset": 98
+      },
+      {
+        "text": "BRAKE LIGHTS",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 103,
+        "endOffset": 115
+      },
+      {
+        "text": "SRS AIRBAG LIGHT",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 161,
+        "endOffset": 177
+      },
+      {
+        "text": "MASTER ALARM BUZZER",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 183,
+        "endOffset": 202
+      },
+      {
+        "text": "BRAKE ACTUATOR",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 476,
+        "endOffset": 490
+      },
+      {
+        "text": "BRAKE FLUID",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 295,
+        "endOffset": 306
+      }
+    ]
+  },
+  "11353836": {
+    "entities": []
+  },
+  "11362777": {
+    "entities": []
+  },
+  "11384908": {
+    "entities": [
+      {
+        "text": "HEAD LIGHT ARE INTERMITTENT",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 0,
+        "endOffset": 27
+      }
+    ]
+  },
+  "11396384": {
+    "entities": [
+      {
+        "text": "FRICTION BRAKES",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 85,
+        "endOffset": 100
+      },
+      {
+        "text": "FRICTION BRAKES",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 156,
+        "endOffset": 171
+      },
+      {
+        "text": "REAR DRUM BRAKES",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 420,
+        "endOffset": 436
+      },
+      {
+        "text": "FRONT DISK BRAKES",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 445,
+        "endOffset": 462
+      },
+      {
+        "text": "FRICTION BRAKES COME IN AND LOCK UP WAY TOO HARD",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 156,
+        "endOffset": 204
+      },
+      {
+        "text": "THE CAR TO SKID AND/OR BUCK",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 272,
+        "endOffset": 299
+      }
+    ]
+  },
+  "11398512": {
+    "entities": [
+      {
+        "text": "WILL NOT STAY IN THE GEAR",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 47,
+        "endOffset": 72
+      },
+      {
+        "text": "STARTS TO WARM UP THEN THE CAR MAY SOMETIMES STAY IN GEAR",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 158,
+        "endOffset": 215
+      }
+    ]
+  },
+  "11404857": {
+    "entities": [
+      {
+        "text": "BRAKE WARNING LIGHT WAS ILLUMINATED",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 184,
+        "endOffset": 219
+      },
+      {
+        "text": "BRAKE ACTUATOR NEEDING TO BE REPLACED",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 333,
+        "endOffset": 370
+      }
+    ]
+  },
+  "11406976": {
+    "entities": [
+      {
+        "text": "CAR STOPPED ACCELERATING/ ENGINE DIED WHILE DRIVING AT 20-30 MPH EXITING HOLLAND TUNNEL",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 0,
+        "endOffset": 87
+      },
+      {
+        "text": "RED WARNING LIGHT ON",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 160,
+        "endOffset": 180
+      },
+      {
+        "text": "AC WARNING LIGHT",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 182,
+        "endOffset": 198
+      },
+      {
+        "text": "RESUMED ACCELERATING",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 323,
+        "endOffset": 343
+      }
+    ]
+  },
+  "11414753": {
+    "entities": [
+      {
+        "text": "ACTUATOR ON MY BRAKE SYSTEM",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 60,
+        "endOffset": 87
+      },
+      {
+        "text": "ABS, BRAKE, AND VSC LIGHTS ILLUMINATED",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 175,
+        "endOffset": 213
+      }
+    ]
+  },
+  "11432759": {
+    "entities": [
+      {
+        "text": "could not stop",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 198,
+        "endOffset": 212
+      },
+      {
+        "text": "airbags failed to deploy",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 526,
+        "endOffset": 550
+      }
+    ]
+  },
+  "11439482": {
+    "entities": []
+  },
+  "11457000": {
+    "entities": [
+      {
+        "text": "instrument panel was inoperable",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 91,
+        "endOffset": 122
+      }
+    ]
+  },
+  "11458514": {
+    "entities": []
+  },
+  "11479695": {
+    "entities": []
+  },
+  "11506504": {
+    "entities": [
+      {
+        "text": "eccellerated on its own",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 48,
+        "endOffset": 71
+      },
+      {
+        "text": "the car did not respond",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 101,
+        "endOffset": 124
+      },
+      {
+        "text": "simply kept driving at around 20 miles per hour",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 129,
+        "endOffset": 176
+      }
+    ]
+  },
+  "11509394": {
+    "entities": [
+      {
+        "text": "antilock braking and traction control systems",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 308,
+        "endOffset": 353
+      },
+      {
+        "text": "traction control",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 329,
+        "endOffset": 345
+      },
+      {
+        "text": "traction control",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 459,
+        "endOffset": 475
+      },
+      {
+        "text": "traction control",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 608,
+        "endOffset": 624
+      },
+      {
+        "text": "traction control",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 657,
+        "endOffset": 673
+      },
+      {
+        "text": "anti-lock brakes",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 895,
+        "endOffset": 911
+      },
+      {
+        "text": "traction control kicks in",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 608,
+        "endOffset": 633
+      },
+      {
+        "text": "traction control immediately cuts all motive power to the drive wheels",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 657,
+        "endOffset": 727
+      },
+      {
+        "text": "it cuts in and out until the car decides it has enough traction to proceed",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 787,
+        "endOffset": 861
+      },
+      {
+        "text": "the anti-lock system initiates, the brakes simply cut out",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 994,
+        "endOffset": 1051
+      },
+      {
+        "text": "the car jumps ahead, until they grab, then loose again immediately, with multiple lurches",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 1057,
+        "endOffset": 1146
+      },
+      {
+        "text": "sometimes just no brakes at all available",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 1152,
+        "endOffset": 1193
+      }
+    ]
+  },
+  "11521924": {
+    "entities": [
+      {
+        "text": "red triangle keeps coming on with engine repair light",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 4,
+        "endOffset": 57
+      },
+      {
+        "text": "water pump",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 156,
+        "endOffset": 166
+      }
+    ]
+  },
+  "11544891": {
+    "entities": [
+      {
+        "text": "ABS brake actuator",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 39,
+        "endOffset": 57
+      },
+      {
+        "text": "abs brake actuator",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 279,
+        "endOffset": 297
+      },
+      {
+        "text": "abs brake actuator fail",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 279,
+        "endOffset": 302
+      }
+    ]
+  },
+  "11547686": {
+    "entities": [
+      {
+        "text": "lost functionality for some buttons on the steering wheel",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 6,
+        "endOffset": 63
+      },
+      {
+        "text": "clockspring mechanism inside the whweel",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 118,
+        "endOffset": 157
+      },
+      {
+        "text": "flex cable",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 219,
+        "endOffset": 229
+      },
+      {
+        "text": "airbag's electrical lines",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 315,
+        "endOffset": 340
+      },
+      {
+        "text": "airbag",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 315,
+        "endOffset": 321
+      },
+      {
+        "text": "airbag",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 382,
+        "endOffset": 388
+      },
+      {
+        "text": "airbag",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 534,
+        "endOffset": 540
+      }
+    ]
+  },
+  "11582441": {
+    "entities": [
+      {
+        "text": "SOFT brake pedal",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 82,
+        "endOffset": 98
+      },
+      {
+        "text": "brake pump",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 281,
+        "endOffset": 291
+      }
+    ]
+  },
+  "11593182": {
+    "entities": [
+      {
+        "text": "abs actuator",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 64,
+        "endOffset": 76
+      },
+      {
+        "text": "brakes",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 95,
+        "endOffset": 101
+      },
+      {
+        "text": "brakes",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 321,
+        "endOffset": 327
+      },
+      {
+        "text": "brakes sometimes is floored to the ground with minimal stoppage",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 321,
+        "endOffset": 384
+      }
+    ]
+  },
+  "11596913": {
+    "entities": [
+      {
+        "text": "brakes seized",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 105,
+        "endOffset": 118
+      },
+      {
+        "text": "squealing sound",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 153,
+        "endOffset": 168
+      },
+      {
+        "text": "ABS warning light illuminated",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 177,
+        "endOffset": 206
+      },
+      {
+        "text": "odometer was inoperable",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 428,
+        "endOffset": 451
+      },
+      {
+        "text": "odometer was stuck on 299,999",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 523,
+        "endOffset": 552
+      }
+    ]
+  },
+  "11608878": {
+    "entities": []
+  },
+  "11648968": {
+    "entities": [
+      {
+        "text": "brake warning lights",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 6,
+        "endOffset": 26
+      },
+      {
+        "text": "brake actuator",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 49,
+        "endOffset": 63
+      },
+      {
+        "text": "brake actuator",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 131,
+        "endOffset": 145
+      },
+      {
+        "text": "brake actuator",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 417,
+        "endOffset": 431
+      },
+      {
+        "text": "brake actuator fail",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 49,
+        "endOffset": 68
+      }
+    ]
+  },
+  "11658429": {
+    "entities": [
+      {
+        "text": "driver-side airbag failed to deploy",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 311,
+        "endOffset": 346
+      },
+      {
+        "text": "severe cognitive symptoms",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 658,
+        "endOffset": 683
+      },
+      {
+        "text": "confusion",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 695,
+        "endOffset": 704
+      },
+      {
+        "text": "chronic fatigue",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 706,
+        "endOffset": 721
+      },
+      {
+        "text": "sudden drowsiness",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 723,
+        "endOffset": 740
+      },
+      {
+        "text": "memory loss",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 742,
+        "endOffset": 753
+      },
+      {
+        "text": "extreme mood swings",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 759,
+        "endOffset": 778
+      },
+      {
+        "text": "airbag system failed",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 1471,
+        "endOffset": 1491
+      }
+    ]
+  },
+  "11698502": {
+    "entities": [
+      {
+        "text": "turn signals",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 134,
+        "endOffset": 146
+      },
+      {
+        "text": "turn signals were inoperable",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 134,
+        "endOffset": 162
+      }
+    ]
+  },
+  "11698556": {
+    "entities": [
+      {
+        "text": "left turn signal",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 105,
+        "endOffset": 121
+      },
+      {
+        "text": "left turn signal",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 150,
+        "endOffset": 166
+      },
+      {
+        "text": "four-way flashers",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 241,
+        "endOffset": 258
+      },
+      {
+        "text": "computer failure",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 357,
+        "endOffset": 373
+      },
+      {
+        "text": "left turn signal failed to function as intended",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 150,
+        "endOffset": 197
+      },
+      {
+        "text": "four-way flashers failed to function as intended",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 241,
+        "endOffset": 289
+      }
+    ]
+  },
+  "11710245": {
+    "entities": [
+      {
+        "text": "ABS actuator",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 0,
+        "endOffset": 12
+      },
+      {
+        "text": "little to no braking action",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 28,
+        "endOffset": 55
+      },
+      {
+        "text": "Had to swerve to avoid collision on interstate",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 86,
+        "endOffset": 132
+      }
+    ]
+  },
+  "11718280": {
+    "entities": [
+      {
+        "text": "engine faliure",
+        "type": "Component",
+        "confidence": 10,
+        "startOffset": 115,
+        "endOffset": 129
+      },
+      {
+        "text": "engine faliure",
+        "type": "Failure Mode",
+        "confidence": 10,
+        "startOffset": 115,
+        "endOffset": 129
+      }
+    ]
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "model": "gemma4:e4b",
+  "promptIds": [
+    3,
+    6
+  ],
+  "promptName": "Prompt 3 failure-mode exclusions + Prompt 6 expanded-recall components",
+  "promptComposition": "Both category prompts composed into one system prompt and sent in one request per complaint.",
+  "complaintCount": 30,
+  "inputs": [
+    "complaint_summaries.txt",
+    "entity-labels.json"
+  ],
+  "inputSha256": {
+    "complaints": "23aadd7e8819c48fe5f550d3f4a5125ee0cb74e55304d80c223f90a42da86923",
+    "labels": "09319f933425df4d438d42396a8068f9a6eb105db7cb8b9411b86e690566dfe0"
+  },
+  "promptSha256": "c9107a4dfafaf8b3b7a7d74585f403ab38c5f76739bbbab7c4508449f56b36f7",
+  "evaluationMethod": "Per-complaint one-to-one, category-aware token Dice matching at 0.50; micro-averaged.",
+  "startedAt": "2026-11-20T17:33:21.788Z",
+  "completedAt": "2026-11-20T17:37:35.052Z",
+  "modelCalls": 30,
+  "cachedResponses": 0,
+  "failedComplaints": 5,
+  "failures": [
+    {
+      "complaintId": "11353836",
+      "error": "The LLM returned a duplicate extraction."
+    },
+    {
+      "complaintId": "11439482",
+      "error": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"not knowing the mileage\""
+    },
+    {
+      "complaintId": "11458514",
+      "error": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"brakes didn’t feel normal\""
+    },
+    {
+      "complaintId": "11479695",
+      "error": "The LLM returned a duplicate extraction."
+    },
+    {
+      "complaintId": "11608878",
+      "error": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"brakes don't work at all for a couple of seconds\""
+    }
+  ],
+  "totalModelSeconds": 253.10175550000002,
+  "wallRuntimeSeconds": 253.2621509,
+  "metrics": [
+    {
+      "category": "Overall",
+      "truePositives": 77,
+      "falsePositives": 30,
+      "falseNegatives": 117,
+      "precision": 0.719626168224299,
+      "recall": 0.39690721649484534,
+      "f1": 0.5116279069767442
+    },
+    {
+      "category": "Component",
+      "truePositives": 36,
+      "falsePositives": 14,
+      "falseNegatives": 67,
+      "precision": 0.72,
+      "recall": 0.34951456310679613,
+      "f1": 0.47058823529411764
+    },
+    {
+      "category": "Failure Mode",
+      "truePositives": 41,
+      "falsePositives": 16,
+      "falseNegatives": 50,
+      "precision": 0.7192982456140351,
+      "recall": 0.45054945054945056,
+      "f1": 0.5540540540540542
+    }
+  ],
+  "exactSpanAccuracyAmongFuzzyMatches": 0.6753246753246753
+}

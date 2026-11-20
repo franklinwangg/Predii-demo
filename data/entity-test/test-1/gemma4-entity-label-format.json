@@ -1,0 +1,270 @@
+{
+  "11316484": {
+    "components": [
+      "brake actuator",
+      "fluid accumulator"
+    ],
+    "failure_modes": [
+      "total loss of braking on the vehicle"
+    ]
+  },
+  "11330515": {
+    "components": [
+      "brakes",
+      "brakes",
+      "brakes",
+      "brakes",
+      "abs",
+      "brake lights",
+      "srs airbag light",
+      "master alarm buzzer",
+      "brake actuator",
+      "brake fluid"
+    ],
+    "failure_modes": [
+      "car won't stop",
+      "rear end makes noise and raises up",
+      "abs and brake lights are one",
+      "maintenance  required and srs airbag light",
+      "master alarm buzzer is on and won't go off",
+      "brakes engaged without hitting the brake causes rim to overheat",
+      "brake fluid gets extremely hot",
+      "sometimes when tap on  the brakes they will lock up",
+      "tap the brakes and they straight to the floor",
+      "brake actuator starts whining noise and won't go off even if the car is turned off"
+    ]
+  },
+  "11353836": {
+    "components": [],
+    "failure_modes": []
+  },
+  "11362777": {
+    "components": [],
+    "failure_modes": []
+  },
+  "11384908": {
+    "components": [],
+    "failure_modes": [
+      "head light are intermittent"
+    ]
+  },
+  "11396384": {
+    "components": [
+      "friction brakes",
+      "friction brakes",
+      "rear drum brakes",
+      "front disk brakes"
+    ],
+    "failure_modes": [
+      "friction brakes come in and lock up way too hard",
+      "the car to skid and/or buck"
+    ]
+  },
+  "11398512": {
+    "components": [],
+    "failure_modes": [
+      "will not stay in the gear",
+      "starts to warm up then the car may sometimes stay in gear"
+    ]
+  },
+  "11404857": {
+    "components": [
+      "brake actuator needing to be replaced"
+    ],
+    "failure_modes": [
+      "brake warning light was illuminated"
+    ]
+  },
+  "11406976": {
+    "components": [],
+    "failure_modes": [
+      "car stopped accelerating/ engine died while driving at 20-30 mph exiting holland tunnel",
+      "red warning light on",
+      "ac warning light",
+      "resumed accelerating"
+    ]
+  },
+  "11414753": {
+    "components": [
+      "actuator on my brake system"
+    ],
+    "failure_modes": [
+      "abs, brake, and vsc lights illuminated"
+    ]
+  },
+  "11432759": {
+    "components": [],
+    "failure_modes": [
+      "could not stop",
+      "airbags failed to deploy"
+    ]
+  },
+  "11439482": {
+    "components": [],
+    "failure_modes": []
+  },
+  "11457000": {
+    "components": [],
+    "failure_modes": [
+      "instrument panel was inoperable"
+    ]
+  },
+  "11458514": {
+    "components": [],
+    "failure_modes": []
+  },
+  "11479695": {
+    "components": [],
+    "failure_modes": []
+  },
+  "11506504": {
+    "components": [],
+    "failure_modes": [
+      "eccellerated on its own",
+      "the car did not respond",
+      "simply kept driving at around 20 miles per hour"
+    ]
+  },
+  "11509394": {
+    "components": [
+      "antilock braking and traction control systems",
+      "traction control",
+      "traction control",
+      "traction control",
+      "traction control",
+      "anti-lock brakes"
+    ],
+    "failure_modes": [
+      "traction control kicks in",
+      "traction control immediately cuts all motive power to the drive wheels",
+      "it cuts in and out until the car decides it has enough traction to proceed",
+      "the anti-lock system initiates, the brakes simply cut out",
+      "the car jumps ahead, until they grab, then loose again immediately, with multiple lurches",
+      "sometimes just no brakes at all available"
+    ]
+  },
+  "11521924": {
+    "components": [
+      "water pump"
+    ],
+    "failure_modes": [
+      "red triangle keeps coming on with engine repair light"
+    ]
+  },
+  "11544891": {
+    "components": [
+      "abs brake actuator",
+      "abs brake actuator"
+    ],
+    "failure_modes": [
+      "abs brake actuator fail"
+    ]
+  },
+  "11547686": {
+    "components": [
+      "clockspring mechanism inside the whweel",
+      "flex cable",
+      "airbag's electrical lines",
+      "airbag",
+      "airbag",
+      "airbag"
+    ],
+    "failure_modes": [
+      "lost functionality for some buttons on the steering wheel"
+    ]
+  },
+  "11582441": {
+    "components": [
+      "brake pump"
+    ],
+    "failure_modes": [
+      "soft brake pedal"
+    ]
+  },
+  "11593182": {
+    "components": [
+      "abs actuator",
+      "brakes",
+      "brakes"
+    ],
+    "failure_modes": [
+      "brakes sometimes is floored to the ground with minimal stoppage"
+    ]
+  },
+  "11596913": {
+    "components": [],
+    "failure_modes": [
+      "brakes seized",
+      "squealing sound",
+      "abs warning light illuminated",
+      "odometer was inoperable",
+      "odometer was stuck on 299,999"
+    ]
+  },
+  "11608878": {
+    "components": [],
+    "failure_modes": []
+  },
+  "11648968": {
+    "components": [
+      "brake warning lights",
+      "brake actuator",
+      "brake actuator",
+      "brake actuator"
+    ],
+    "failure_modes": [
+      "brake actuator fail"
+    ]
+  },
+  "11658429": {
+    "components": [
+      "driver-side airbag failed to deploy",
+      "airbag system failed"
+    ],
+    "failure_modes": [
+      "severe cognitive symptoms",
+      "confusion",
+      "chronic fatigue",
+      "sudden drowsiness",
+      "memory loss",
+      "extreme mood swings"
+    ]
+  },
+  "11698502": {
+    "components": [
+      "turn signals"
+    ],
+    "failure_modes": [
+      "turn signals were inoperable"
+    ]
+  },
+  "11698556": {
+    "components": [
+      "left turn signal",
+      "left turn signal",
+      "four-way flashers",
+      "computer failure"
+    ],
+    "failure_modes": [
+      "left turn signal failed to function as intended",
+      "four-way flashers failed to function as intended"
+    ]
+  },
+  "11710245": {
+    "components": [
+      "abs actuator"
+    ],
+    "failure_modes": [
+      "little to no braking action",
+      "had to swerve to avoid collision on interstate"
+    ]
+  },
+  "11718280": {
+    "components": [
+      "engine faliure"
+    ],
+    "failure_modes": [
+      "engine faliure"
+    ]
+  }
+}

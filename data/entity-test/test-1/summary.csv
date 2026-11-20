@@ -1,0 +1,4 @@
+"model","prompt","category","complaints","precision","recall","f1","true_positives","false_positives","false_negatives","failed_complaints","model_calls","cached_responses","average_inference_seconds","total_inference_seconds"
+"gemma4:e4b","3+6 combined","Overall","30","0.719626168224299","0.39690721649484534","0.5116279069767442","77","30","117","5","30","0","8.436725183333333","253.10175550000002"
+"gemma4:e4b","3+6 combined","Component","30","0.72","0.34951456310679613","0.47058823529411764","36","14","67","5","30","0","8.436725183333333","253.10175550000002"
+"gemma4:e4b","3+6 combined","Failure Mode","30","0.7192982456140351","0.45054945054945056","0.5540540540540542","41","16","50","5","30","0","8.436725183333333","253.10175550000002"
