@@ -12,12 +12,6 @@
       "name": "Component-only extraction (expanded recall)",
       "category": "Component",
       "sha256": "08eaaa44e9f4cb2f864542bed4d827e1f66005312ad290a51a59577abc1b337e"
-    },
-    {
-      "id": 5,
-      "name": "Failure-mode-only extraction",
-      "category": "Failure Mode",
-      "sha256": "69c88d1c61ce463cd2f9640b4d2d63602c727492e691aa79ded8fc7336dc8942"
     }
   ],
   "complaints": [
@@ -55,45 +49,7 @@
         "inferenceMs": 20722.5733,
         "elapsedMs": 20722.5733,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11316484",
-        "predictions": [
-          {
-            "text": "CAN LEAD TO A TOTAL LOSS OF BRAKING ON THE VEHICLE",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 344,
-            "endOffset": 394
-          }
-        ],
-        "inferenceMs": 3601.232899999988,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "BRAKE ACTUATOR",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 18,
-          "endOffset": 32
-        },
-        {
-          "text": "FLUID ACCUMULATOR",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 34,
-          "endOffset": 51
-        },
-        {
-          "text": "CAN LEAD TO A TOTAL LOSS OF BRAKING ON THE VEHICLE",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 344,
-          "endOffset": 394
-        }
-      ]
+      }
     },
     {
       "complaintId": "11330515",
@@ -209,234 +165,7 @@
         "inferenceMs": 12853.180200000003,
         "elapsedMs": 12853.180200000003,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11330515",
-        "predictions": [
-          {
-            "text": "THE CAR WON'T STOP",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 28,
-            "endOffset": 46
-          },
-          {
-            "text": "THE REAR END MAKES NOISE AND RAISES UP",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 51,
-            "endOffset": 89
-          },
-          {
-            "text": "THE ABS AND BRAKE LIGHTS ARE ONE",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 91,
-            "endOffset": 123
-          },
-          {
-            "text": "MAINTENANCE  REQUIRED AND SRS AIRBAG LIGHT",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 135,
-            "endOffset": 177
-          },
-          {
-            "text": "THE MASTER ALARM BUZZER IS ON AND WON'T GO OFF",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 179,
-            "endOffset": 225
-          },
-          {
-            "text": "BRAKES ENGAGED WITHOUT HITTING THE BRAKE CAUSES RIM TO OVERHEAT",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 227,
-            "endOffset": 290
-          },
-          {
-            "text": "BRAKE FLUID GETS EXTREMELY HOT",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 295,
-            "endOffset": 325
-          },
-          {
-            "text": "SOMETIMES WHEN TAP ON  THE BRAKES THEY WILL LOCK UP AND YOU WILL GO SLIDING SIDEWAYS",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 332,
-            "endOffset": 416
-          },
-          {
-            "text": "TAP THE BRAKES AND THEY STRAIGHT TO THE FLOOR",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 420,
-            "endOffset": 465
-          },
-          {
-            "text": "THE BRAKE ACTUATOR STARTS WHINING NOISE AND WON'T GO OFF EVEN IF THE CAR IS TURNED OFF",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 472,
-            "endOffset": 558
-          }
-        ],
-        "inferenceMs": 27780.909,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "BRAKES",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 21,
-          "endOffset": 27
-        },
-        {
-          "text": "BRAKES",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 227,
-          "endOffset": 233
-        },
-        {
-          "text": "BRAKES",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 359,
-          "endOffset": 365
-        },
-        {
-          "text": "BRAKES",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 428,
-          "endOffset": 434
-        },
-        {
-          "text": "ABS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 95,
-          "endOffset": 98
-        },
-        {
-          "text": "BRAKE LIGHTS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 103,
-          "endOffset": 115
-        },
-        {
-          "text": "MAINTENANCE  REQUIRED",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 135,
-          "endOffset": 156
-        },
-        {
-          "text": "SRS AIRBAG LIGHT",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 161,
-          "endOffset": 177
-        },
-        {
-          "text": "MASTER ALARM BUZZER",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 183,
-          "endOffset": 202
-        },
-        {
-          "text": "BRAKE FLUID",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 295,
-          "endOffset": 306
-        },
-        {
-          "text": "BRAKE ACTUATOR",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 476,
-          "endOffset": 490
-        },
-        {
-          "text": "THE CAR WON'T STOP",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 28,
-          "endOffset": 46
-        },
-        {
-          "text": "THE REAR END MAKES NOISE AND RAISES UP",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 51,
-          "endOffset": 89
-        },
-        {
-          "text": "THE ABS AND BRAKE LIGHTS ARE ONE",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 91,
-          "endOffset": 123
-        },
-        {
-          "text": "MAINTENANCE  REQUIRED AND SRS AIRBAG LIGHT",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 135,
-          "endOffset": 177
-        },
-        {
-          "text": "THE MASTER ALARM BUZZER IS ON AND WON'T GO OFF",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 179,
-          "endOffset": 225
-        },
-        {
-          "text": "BRAKES ENGAGED WITHOUT HITTING THE BRAKE CAUSES RIM TO OVERHEAT",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 227,
-          "endOffset": 290
-        },
-        {
-          "text": "BRAKE FLUID GETS EXTREMELY HOT",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 295,
-          "endOffset": 325
-        },
-        {
-          "text": "SOMETIMES WHEN TAP ON  THE BRAKES THEY WILL LOCK UP AND YOU WILL GO SLIDING SIDEWAYS",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 332,
-          "endOffset": 416
-        },
-        {
-          "text": "TAP THE BRAKES AND THEY STRAIGHT TO THE FLOOR",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 420,
-          "endOffset": 465
-        },
-        {
-          "text": "THE BRAKE ACTUATOR STARTS WHINING NOISE AND WON'T GO OFF EVEN IF THE CAR IS TURNED OFF",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 472,
-          "endOffset": 558
-        }
-      ]
+      }
     },
     {
       "complaintId": "11353836",
@@ -529,122 +258,7 @@
         "inferenceMs": 13958.894499999995,
         "elapsedMs": 13958.894499999995,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11353836",
-        "predictions": [
-          {
-            "text": "ABS, (!), AND BRAKE LIGHTS CAME ON DASHBOARD",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 117,
-            "endOffset": 161
-          },
-          {
-            "text": "BRAKES BECAME SPONGY UPON STARTUP",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 256,
-            "endOffset": 289
-          },
-          {
-            "text": "ABS ACTUATOR HAD FAILED",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 329,
-            "endOffset": 352
-          }
-        ],
-        "inferenceMs": 10219.0625,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "ABS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 117,
-          "endOffset": 120
-        },
-        {
-          "text": "ABS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 329,
-          "endOffset": 332
-        },
-        {
-          "text": "BRAKE LIGHTS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 131,
-          "endOffset": 143
-        },
-        {
-          "text": "12V BATTERY",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 199,
-          "endOffset": 210
-        },
-        {
-          "text": "BRAKE FLUID",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 215,
-          "endOffset": 226
-        },
-        {
-          "text": "BRAKES",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 256,
-          "endOffset": 262
-        },
-        {
-          "text": "ABS ACTUATOR",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 329,
-          "endOffset": 341
-        },
-        {
-          "text": "FRONT BRAKE PADS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 365,
-          "endOffset": 381
-        },
-        {
-          "text": "ROTORS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 386,
-          "endOffset": 392
-        },
-        {
-          "text": "ABS, (!), AND BRAKE LIGHTS CAME ON DASHBOARD",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 117,
-          "endOffset": 161
-        },
-        {
-          "text": "BRAKES BECAME SPONGY UPON STARTUP",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 256,
-          "endOffset": 289
-        },
-        {
-          "text": "ABS ACTUATOR HAD FAILED",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 329,
-          "endOffset": 352
-        }
-      ]
+      }
     },
     {
       "complaintId": "11362777",
@@ -659,15 +273,7 @@
         "inferenceMs": 1229.9637000000002,
         "elapsedMs": 1229.9637000000002,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11362777",
-        "predictions": [],
-        "inferenceMs": 1307.3957999999984,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": []
+      }
     },
     {
       "complaintId": "11384908",
@@ -694,38 +300,7 @@
         "inferenceMs": 1673.6820999999982,
         "elapsedMs": 1673.6820999999982,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11384908",
-        "predictions": [
-          {
-            "text": "HEAD LIGHT ARE INTERMITTENT",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 0,
-            "endOffset": 27
-          }
-        ],
-        "inferenceMs": 2466.646999999997,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "HEAD LIGHT",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 0,
-          "endOffset": 10
-        },
-        {
-          "text": "HEAD LIGHT ARE INTERMITTENT",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 0,
-          "endOffset": 27
-        }
-      ]
+      }
     },
     {
       "complaintId": "11396384",
@@ -779,73 +354,7 @@
         "inferenceMs": 2909.1322,
         "elapsedMs": 2909.1322,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11396384",
-        "predictions": [
-          {
-            "text": "FRICTION BRAKES COME IN AND LOCK UP WAY TOO HARD",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 156,
-            "endOffset": 204
-          },
-          {
-            "text": "CAUSES THE CAR TO SKID AND/OR BUCK",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 265,
-            "endOffset": 299
-          }
-        ],
-        "inferenceMs": 4049.2483000000066,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "FRICTION BRAKES",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 85,
-          "endOffset": 100
-        },
-        {
-          "text": "FRICTION BRAKES",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 156,
-          "endOffset": 171
-        },
-        {
-          "text": "REAR DRUM BRAKES",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 420,
-          "endOffset": 436
-        },
-        {
-          "text": "FRONT DISK BRAKES",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 445,
-          "endOffset": 462
-        },
-        {
-          "text": "FRICTION BRAKES COME IN AND LOCK UP WAY TOO HARD",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 156,
-          "endOffset": 204
-        },
-        {
-          "text": "CAUSES THE CAR TO SKID AND/OR BUCK",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 265,
-          "endOffset": 299
-        }
-      ]
+      }
     },
     {
       "complaintId": "11398512",
@@ -865,45 +374,7 @@
         "inferenceMs": 1015.0546000000031,
         "elapsedMs": 1015.0546000000031,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11398512",
-        "predictions": [
-          {
-            "text": "IT WILL NOT STAY IN THE GEAR",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 44,
-            "endOffset": 72
-          },
-          {
-            "text": "IT STARTS TO WARM UP THEN THE CAR MAY SOMETIMES STAY IN GEAR",
-            "type": "Failure Mode",
-            "confidence": 9,
-            "startOffset": 155,
-            "endOffset": 215
-          }
-        ],
-        "inferenceMs": 3905.715499999991,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "IT WILL NOT STAY IN THE GEAR",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 44,
-          "endOffset": 72
-        },
-        {
-          "text": "IT STARTS TO WARM UP THEN THE CAR MAY SOMETIMES STAY IN GEAR",
-          "type": "Failure Mode",
-          "confidence": 9,
-          "startOffset": 155,
-          "endOffset": 215
-        }
-      ]
+      }
     },
     {
       "complaintId": "11404857",
@@ -947,52 +418,7 @@
         "inferenceMs": 2862.9878000000026,
         "elapsedMs": 2862.9878000000026,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11404857",
-        "predictions": [
-          {
-            "text": "THE BRAKE WARNING LIGHT WAS ILLUMINATED",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 180,
-            "endOffset": 219
-          }
-        ],
-        "inferenceMs": 2248.9696000000113,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "BRAKE PEDAL",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 98,
-          "endOffset": 109
-        },
-        {
-          "text": "BRAKE WARNING LIGHT",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 184,
-          "endOffset": 203
-        },
-        {
-          "text": "BRAKE ACTUATOR",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 333,
-          "endOffset": 347
-        },
-        {
-          "text": "THE BRAKE WARNING LIGHT WAS ILLUMINATED",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 180,
-          "endOffset": 219
-        }
-      ]
+      }
     },
     {
       "complaintId": "11406976",
@@ -1022,66 +448,7 @@
         "inferenceMs": 1781.2617000000027,
         "elapsedMs": 1781.2617000000027,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11406976",
-        "predictions": [
-          {
-            "text": "CAR STOPPED ACCELERATING",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 0,
-            "endOffset": 24
-          },
-          {
-            "text": "ENGINE DIED WHILE DRIVING",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 26,
-            "endOffset": 51
-          },
-          {
-            "text": "RED WARNING LIGHT ON",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 160,
-            "endOffset": 180
-          }
-        ],
-        "inferenceMs": 4797.660700000008,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "RED WARNING LIGHT",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 160,
-          "endOffset": 177
-        },
-        {
-          "text": "CAR STOPPED ACCELERATING",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 0,
-          "endOffset": 24
-        },
-        {
-          "text": "ENGINE DIED WHILE DRIVING",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 26,
-          "endOffset": 51
-        },
-        {
-          "text": "RED WARNING LIGHT ON",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 160,
-          "endOffset": 180
-        }
-      ]
+      }
     },
     {
       "complaintId": "11414753",
@@ -1147,73 +514,7 @@
         "inferenceMs": 4386.039900000003,
         "elapsedMs": 4386.039900000003,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11414753",
-        "predictions": [
-          {
-            "text": "THE ABS, BRAKE, AND VSC LIGHTS ILLUMINATED",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 171,
-            "endOffset": 213
-          }
-        ],
-        "inferenceMs": 2584.5074000000022,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "ACTUATOR",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 60,
-          "endOffset": 68
-        },
-        {
-          "text": "BRAKE SYSTEM",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 75,
-          "endOffset": 87
-        },
-        {
-          "text": "ABS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 175,
-          "endOffset": 178
-        },
-        {
-          "text": "BRAKE",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 75,
-          "endOffset": 80
-        },
-        {
-          "text": "BRAKE",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 180,
-          "endOffset": 185
-        },
-        {
-          "text": "VSC LIGHTS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 191,
-          "endOffset": 201
-        },
-        {
-          "text": "THE ABS, BRAKE, AND VSC LIGHTS ILLUMINATED",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 171,
-          "endOffset": 213
-        }
-      ]
+      }
     },
     {
       "complaintId": "11432759",
@@ -1275,52 +576,7 @@
         "inferenceMs": 4249.160199999998,
         "elapsedMs": 4249.160199999998,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11432759",
-        "predictions": [],
-        "inferenceMs": 5824.190000000002,
-        "elapsedMs": 5824.190000000002,
-        "cached": false,
-        "error": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"passenger side seatbelt did not [engage]\""
-      },
-      "combinedPredictions": [
-        {
-          "text": "driver side seatbelt",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 379,
-          "endOffset": 399
-        },
-        {
-          "text": "passenger side seatbelt",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 417,
-          "endOffset": 440
-        },
-        {
-          "text": "dashboard",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 486,
-          "endOffset": 495
-        },
-        {
-          "text": "airbags",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 526,
-          "endOffset": 533
-        },
-        {
-          "text": "airbags",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 598,
-          "endOffset": 605
-        }
-      ]
+      }
     },
     {
       "complaintId": "11439482",
@@ -1349,52 +605,7 @@
         "inferenceMs": 1904.0108000000037,
         "elapsedMs": 1904.0108000000037,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11439482",
-        "predictions": [
-          {
-            "text": "instrument panel failed to light up or show any electrical functions",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 89,
-            "endOffset": 157
-          },
-          {
-            "text": "the failure persisted",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 202,
-            "endOffset": 223
-          }
-        ],
-        "inferenceMs": 3501.598900000012,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "instrument panel",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 89,
-          "endOffset": 105
-        },
-        {
-          "text": "instrument panel failed to light up or show any electrical functions",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 89,
-          "endOffset": 157
-        },
-        {
-          "text": "the failure persisted",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 202,
-          "endOffset": 223
-        }
-      ]
+      }
     },
     {
       "complaintId": "11457000",
@@ -1421,38 +632,7 @@
         "inferenceMs": 2011.3594999999914,
         "elapsedMs": 2011.3594999999914,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11457000",
-        "predictions": [
-          {
-            "text": "the instrument panel was inoperable",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 87,
-            "endOffset": 122
-          }
-        ],
-        "inferenceMs": 1813.6837999999989,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "instrument panel",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 91,
-          "endOffset": 107
-        },
-        {
-          "text": "the instrument panel was inoperable",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 87,
-          "endOffset": 122
-        }
-      ]
+      }
     },
     {
       "complaintId": "11458514",
@@ -1567,185 +747,7 @@
         "inferenceMs": 5174.967399999994,
         "elapsedMs": 5174.967399999994,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11458514",
-        "predictions": [
-          {
-            "text": "multiple lights came on (ABS, VSC, & brake)",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 25,
-            "endOffset": 68
-          },
-          {
-            "text": "Brakes became hard to push at times and didn’t feel normal",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 70,
-            "endOffset": 128
-          },
-          {
-            "text": "the lights came back on and a constant alarm started sounding",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 255,
-            "endOffset": 316
-          },
-          {
-            "text": "The brake system failed",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 318,
-            "endOffset": 341
-          },
-          {
-            "text": "the vehicle was super hard to stop",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 346,
-            "endOffset": 380
-          },
-          {
-            "text": "It took pumping of the brakes and full force on the pedal to bring it to a stop",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 465,
-            "endOffset": 544
-          }
-        ],
-        "inferenceMs": 17103.869000000006,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "ABS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 50,
-          "endOffset": 53
-        },
-        {
-          "text": "ABS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 159,
-          "endOffset": 162
-        },
-        {
-          "text": "ABS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 591,
-          "endOffset": 594
-        },
-        {
-          "text": "VSC",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 55,
-          "endOffset": 58
-        },
-        {
-          "text": "brake",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 62,
-          "endOffset": 67
-        },
-        {
-          "text": "Brake",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 70,
-          "endOffset": 75
-        },
-        {
-          "text": "brake",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 216,
-          "endOffset": 221
-        },
-        {
-          "text": "brake",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 322,
-          "endOffset": 327
-        },
-        {
-          "text": "brake",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 488,
-          "endOffset": 493
-        },
-        {
-          "text": "ABS speed sensors",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 159,
-          "endOffset": 176
-        },
-        {
-          "text": "ABS control module/actuator",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 591,
-          "endOffset": 618
-        },
-        {
-          "text": "brake system",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 322,
-          "endOffset": 334
-        },
-        {
-          "text": "multiple lights came on (ABS, VSC, & brake)",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 25,
-          "endOffset": 68
-        },
-        {
-          "text": "Brakes became hard to push at times and didn’t feel normal",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 70,
-          "endOffset": 128
-        },
-        {
-          "text": "the lights came back on and a constant alarm started sounding",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 255,
-          "endOffset": 316
-        },
-        {
-          "text": "The brake system failed",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 318,
-          "endOffset": 341
-        },
-        {
-          "text": "the vehicle was super hard to stop",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 346,
-          "endOffset": 380
-        },
-        {
-          "text": "It took pumping of the brakes and full force on the pedal to bring it to a stop",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 465,
-          "endOffset": 544
-        }
-      ]
+      }
     },
     {
       "complaintId": "11479695",
@@ -1792,94 +794,7 @@
         "inferenceMs": 2216.484500000006,
         "elapsedMs": 2216.484500000006,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11479695",
-        "predictions": [
-          {
-            "text": "The vehicle stalled at low speeds while driving on an incline",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 25,
-            "endOffset": 86
-          },
-          {
-            "text": "gave a large red exclamation error sign on the dashboard",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 91,
-            "endOffset": 147
-          },
-          {
-            "text": "It stopped accelerating and came to a stop",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 149,
-            "endOffset": 191
-          },
-          {
-            "text": "the engine will not start anymore",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 204,
-            "endOffset": 237
-          }
-        ],
-        "inferenceMs": 6760.333699999988,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "Fuel pump",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 0,
-          "endOffset": 9
-        },
-        {
-          "text": "fuel pump",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 288,
-          "endOffset": 297
-        },
-        {
-          "text": "dashboard",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 138,
-          "endOffset": 147
-        },
-        {
-          "text": "The vehicle stalled at low speeds while driving on an incline",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 25,
-          "endOffset": 86
-        },
-        {
-          "text": "gave a large red exclamation error sign on the dashboard",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 91,
-          "endOffset": 147
-        },
-        {
-          "text": "It stopped accelerating and came to a stop",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 149,
-          "endOffset": 191
-        },
-        {
-          "text": "the engine will not start anymore",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 204,
-          "endOffset": 237
-        }
-      ]
+      }
     },
     {
       "complaintId": "11506504",
@@ -1899,59 +814,7 @@
         "inferenceMs": 962.2717000000121,
         "elapsedMs": 962.2717000000121,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11506504",
-        "predictions": [
-          {
-            "text": "my car eccellerated on its own",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 41,
-            "endOffset": 71
-          },
-          {
-            "text": "the car did not respond",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 101,
-            "endOffset": 124
-          },
-          {
-            "text": "simply kept driving at around 20 miles per hour",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 129,
-            "endOffset": 176
-          }
-        ],
-        "inferenceMs": 5266.031500000012,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "my car eccellerated on its own",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 41,
-          "endOffset": 71
-        },
-        {
-          "text": "the car did not respond",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 101,
-          "endOffset": 124
-        },
-        {
-          "text": "simply kept driving at around 20 miles per hour",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 129,
-          "endOffset": 176
-        }
-      ]
+      }
     },
     {
       "complaintId": "11509394",
@@ -2039,73 +902,7 @@
         "inferenceMs": 4867.740699999995,
         "elapsedMs": 4867.740699999995,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11509394",
-        "predictions": [],
-        "inferenceMs": 16988.254799999995,
-        "elapsedMs": 16988.254799999995,
-        "cached": false,
-        "error": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"traction control cuts in and out until the car decides it has enough traction to proceed\""
-      },
-      "combinedPredictions": [
-        {
-          "text": "antilock braking",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 308,
-          "endOffset": 324
-        },
-        {
-          "text": "traction control systems",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 329,
-          "endOffset": 353
-        },
-        {
-          "text": "traction control",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 329,
-          "endOffset": 345
-        },
-        {
-          "text": "traction control",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 459,
-          "endOffset": 475
-        },
-        {
-          "text": "traction control",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 608,
-          "endOffset": 624
-        },
-        {
-          "text": "traction control",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 657,
-          "endOffset": 673
-        },
-        {
-          "text": "anti-lock brakes",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 895,
-          "endOffset": 911
-        },
-        {
-          "text": "anti-lock system",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 998,
-          "endOffset": 1014
-        }
-      ]
+      }
     },
     {
       "complaintId": "11521924",
@@ -2149,52 +946,7 @@
         "inferenceMs": 2737.2819000000018,
         "elapsedMs": 2737.2819000000018,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11521924",
-        "predictions": [
-          {
-            "text": "The red triangle keeps coming on with engine repair light when ever I'm driving from Los Angeles",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 0,
-            "endOffset": 96
-          }
-        ],
-        "inferenceMs": 2476.761200000008,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "red triangle",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 4,
-          "endOffset": 16
-        },
-        {
-          "text": "engine repair light",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 38,
-          "endOffset": 57
-        },
-        {
-          "text": "water pump",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 156,
-          "endOffset": 166
-        },
-        {
-          "text": "The red triangle keeps coming on with engine repair light when ever I'm driving from Los Angeles",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 0,
-          "endOffset": 96
-        }
-      ]
+      }
     },
     {
       "complaintId": "11544891",
@@ -2230,31 +982,7 @@
         "inferenceMs": 1539.800700000007,
         "elapsedMs": 1539.800700000007,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11544891",
-        "predictions": [],
-        "inferenceMs": 1716.9635999999882,
-        "elapsedMs": 1716.9635999999882,
-        "cached": false,
-        "error": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"abs brake actuator failing again\""
-      },
-      "combinedPredictions": [
-        {
-          "text": "ABS brake actuator",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 39,
-          "endOffset": 57
-        },
-        {
-          "text": "abs brake actuator",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 279,
-          "endOffset": 297
-        }
-      ]
+      }
     },
     {
       "complaintId": "11547686",
@@ -2322,129 +1050,7 @@
         "inferenceMs": 3973.946100000001,
         "elapsedMs": 3973.946100000001,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11547686",
-        "predictions": [
-          {
-            "text": "lost functionality for some buttons on the steering wheel",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 6,
-            "endOffset": 63
-          },
-          {
-            "text": "Four of the lines in the flex cable are impacted by corrosion",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 194,
-            "endOffset": 255
-          },
-          {
-            "text": "three have already failed",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 257,
-            "endOffset": 282
-          },
-          {
-            "text": "The fourth line is one of the airbag's electrical lines",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 285,
-            "endOffset": 340
-          },
-          {
-            "text": "the corroded line could fail during the vehicle's attempt to fire the airbag on the wheel",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 464,
-            "endOffset": 553
-          }
-        ],
-        "inferenceMs": 8427.691500000015,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "clockspring mechanism",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 118,
-          "endOffset": 139
-        },
-        {
-          "text": "flex cable",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 219,
-          "endOffset": 229
-        },
-        {
-          "text": "airbag's electrical lines",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 315,
-          "endOffset": 340
-        },
-        {
-          "text": "airbag",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 315,
-          "endOffset": 321
-        },
-        {
-          "text": "airbag",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 382,
-          "endOffset": 388
-        },
-        {
-          "text": "airbag",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 534,
-          "endOffset": 540
-        },
-        {
-          "text": "lost functionality for some buttons on the steering wheel",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 6,
-          "endOffset": 63
-        },
-        {
-          "text": "Four of the lines in the flex cable are impacted by corrosion",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 194,
-          "endOffset": 255
-        },
-        {
-          "text": "three have already failed",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 257,
-          "endOffset": 282
-        },
-        {
-          "text": "The fourth line is one of the airbag's electrical lines",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 285,
-          "endOffset": 340
-        },
-        {
-          "text": "the corroded line could fail during the vehicle's attempt to fire the airbag on the wheel",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 464,
-          "endOffset": 553
-        }
-      ]
+      }
     },
     {
       "complaintId": "11582441",
@@ -2489,52 +1095,7 @@
         "inferenceMs": 2719.486499999999,
         "elapsedMs": 2719.486499999999,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11582441",
-        "predictions": [
-          {
-            "text": "defaulting to SOFT brake pedal",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 68,
-            "endOffset": 98
-          }
-        ],
-        "inferenceMs": 1817.8490000000165,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "braking systems",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 35,
-          "endOffset": 50
-        },
-        {
-          "text": "brake pedal",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 87,
-          "endOffset": 98
-        },
-        {
-          "text": "brake pump",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 281,
-          "endOffset": 291
-        },
-        {
-          "text": "defaulting to SOFT brake pedal",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 68,
-          "endOffset": 98
-        }
-      ]
+      }
     },
     {
       "complaintId": "11593182",
@@ -2578,66 +1139,7 @@
         "inferenceMs": 2258.149099999995,
         "elapsedMs": 2258.149099999995,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11593182",
-        "predictions": [
-          {
-            "text": "the abs actuator which control the brakes isn't safe to drive around when not functioning right",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 60,
-            "endOffset": 155
-          },
-          {
-            "text": "My brakes sometimes is floored to the ground with minimal stoppage",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 318,
-            "endOffset": 384
-          }
-        ],
-        "inferenceMs": 3947.467799999984,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "abs actuator",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 64,
-          "endOffset": 76
-        },
-        {
-          "text": "brakes",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 95,
-          "endOffset": 101
-        },
-        {
-          "text": "brakes",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 321,
-          "endOffset": 327
-        },
-        {
-          "text": "the abs actuator which control the brakes isn't safe to drive around when not functioning right",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 60,
-          "endOffset": 155
-        },
-        {
-          "text": "My brakes sometimes is floored to the ground with minimal stoppage",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 318,
-          "endOffset": 384
-        }
-      ]
+      }
     },
     {
       "complaintId": "11596913",
@@ -2693,115 +1195,7 @@
         "inferenceMs": 2704.9103999999934,
         "elapsedMs": 2704.9103999999934,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11596913",
-        "predictions": [
-          {
-            "text": "the brakes seized",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 101,
-            "endOffset": 118
-          },
-          {
-            "text": "heard a squealing sound",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 145,
-            "endOffset": 168
-          },
-          {
-            "text": "the ABS warning light illuminated",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 173,
-            "endOffset": 206
-          },
-          {
-            "text": "the odometer was inoperable and failed to display the correct mileage",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 424,
-            "endOffset": 493
-          },
-          {
-            "text": "the odometer was stuck on 299,999",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 519,
-            "endOffset": 552
-          }
-        ],
-        "inferenceMs": 7848.858000000007,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "brakes",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 105,
-          "endOffset": 111
-        },
-        {
-          "text": "ABS warning light",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 177,
-          "endOffset": 194
-        },
-        {
-          "text": "odometer",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 428,
-          "endOffset": 436
-        },
-        {
-          "text": "odometer",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 523,
-          "endOffset": 531
-        },
-        {
-          "text": "the brakes seized",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 101,
-          "endOffset": 118
-        },
-        {
-          "text": "heard a squealing sound",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 145,
-          "endOffset": 168
-        },
-        {
-          "text": "the ABS warning light illuminated",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 173,
-          "endOffset": 206
-        },
-        {
-          "text": "the odometer was inoperable and failed to display the correct mileage",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 424,
-          "endOffset": 493
-        },
-        {
-          "text": "the odometer was stuck on 299,999",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 519,
-          "endOffset": 552
-        }
-      ]
+      }
     },
     {
       "complaintId": "11608878",
@@ -2855,45 +1249,7 @@
         "inferenceMs": 3582.243300000002,
         "elapsedMs": 3582.243300000002,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11608878",
-        "predictions": [],
-        "inferenceMs": 5635.470499999996,
-        "elapsedMs": 5635.470499999996,
-        "cached": false,
-        "error": "Invalid offsets or no case/whitespace-normalized match for extracted text: \"brakes sometimes don't work at all for a couple of seconds\""
-      },
-      "combinedPredictions": [
-        {
-          "text": "Brake actuator",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 0,
-          "endOffset": 14
-        },
-        {
-          "text": "brakes",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 51,
-          "endOffset": 57
-        },
-        {
-          "text": "ABS",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 222,
-          "endOffset": 225
-        },
-        {
-          "text": "TPMS light",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 230,
-          "endOffset": 240
-        }
-      ]
+      }
     },
     {
       "complaintId": "11648968",
@@ -2952,80 +1308,7 @@
         "inferenceMs": 2787.7936999999947,
         "elapsedMs": 2787.7936999999947,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11648968",
-        "predictions": [
-          {
-            "text": "brake warning lights pop up on my dash",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 6,
-            "endOffset": 44
-          },
-          {
-            "text": "brake actuator fail",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 49,
-            "endOffset": 68
-          }
-        ],
-        "inferenceMs": 3464.3986999999615,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "brake warning lights",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 6,
-          "endOffset": 26
-        },
-        {
-          "text": "brake actuator",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 49,
-          "endOffset": 63
-        },
-        {
-          "text": "brake actuator",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 131,
-          "endOffset": 145
-        },
-        {
-          "text": "brake actuator",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 417,
-          "endOffset": 431
-        },
-        {
-          "text": "braking system",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 178,
-          "endOffset": 192
-        },
-        {
-          "text": "brake warning lights pop up on my dash",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 6,
-          "endOffset": 44
-        },
-        {
-          "text": "brake actuator fail",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 49,
-          "endOffset": 68
-        }
-      ]
+      }
     },
     {
       "complaintId": "11658429",
@@ -3077,59 +1360,7 @@
         "inferenceMs": 3402.5864,
         "elapsedMs": 3402.5864,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11658429",
-        "predictions": [
-          {
-            "text": "the driver-side airbag failed to deploy",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 307,
-            "endOffset": 346
-          }
-        ],
-        "inferenceMs": 2705.546399999992,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "driver-side airbag",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 311,
-          "endOffset": 329
-        },
-        {
-          "text": "windshield",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 405,
-          "endOffset": 415
-        },
-        {
-          "text": "airbag system",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 1147,
-          "endOffset": 1160
-        },
-        {
-          "text": "airbag system",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 1471,
-          "endOffset": 1484
-        },
-        {
-          "text": "the driver-side airbag failed to deploy",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 307,
-          "endOffset": 346
-        }
-      ]
+      }
     },
     {
       "complaintId": "11698502",
@@ -3164,45 +1395,7 @@
         "inferenceMs": 2282.5353999999934,
         "elapsedMs": 2282.5353999999934,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11698502",
-        "predictions": [
-          {
-            "text": "turn signals were inoperable",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 134,
-            "endOffset": 162
-          }
-        ],
-        "inferenceMs": 1632.5329999999958,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "instrument cluster",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 82,
-          "endOffset": 100
-        },
-        {
-          "text": "turn signals",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 134,
-          "endOffset": 146
-        },
-        {
-          "text": "turn signals were inoperable",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 134,
-          "endOffset": 162
-        }
-      ]
+      }
     },
     {
       "complaintId": "11698556",
@@ -3255,73 +1448,7 @@
         "inferenceMs": 2892.5080000000016,
         "elapsedMs": 2892.5080000000016,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11698556",
-        "predictions": [
-          {
-            "text": "the left turn signal failed to function as intended",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 146,
-            "endOffset": 197
-          },
-          {
-            "text": "the four-way flashers failed to function as intended",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 237,
-            "endOffset": 289
-          }
-        ],
-        "inferenceMs": 3556.0795999999973,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "left turn signal",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 105,
-          "endOffset": 121
-        },
-        {
-          "text": "left turn signal",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 150,
-          "endOffset": 166
-        },
-        {
-          "text": "four-way flashers",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 241,
-          "endOffset": 258
-        },
-        {
-          "text": "computer",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 357,
-          "endOffset": 365
-        },
-        {
-          "text": "the left turn signal failed to function as intended",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 146,
-          "endOffset": 197
-        },
-        {
-          "text": "the four-way flashers failed to function as intended",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 237,
-          "endOffset": 289
-        }
-      ]
+      }
     },
     {
       "complaintId": "11710245",
@@ -3357,59 +1484,7 @@
         "inferenceMs": 2384.874199999991,
         "elapsedMs": 2384.874199999991,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11710245",
-        "predictions": [
-          {
-            "text": "ABS actuator failed",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 0,
-            "endOffset": 19
-          },
-          {
-            "text": "had little to no braking action while merging on the freeway",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 24,
-            "endOffset": 84
-          }
-        ],
-        "inferenceMs": 3441.9562999999616,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "ABS actuator",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 0,
-          "endOffset": 12
-        },
-        {
-          "text": "braking action",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 41,
-          "endOffset": 55
-        },
-        {
-          "text": "ABS actuator failed",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 0,
-          "endOffset": 19
-        },
-        {
-          "text": "had little to no braking action while merging on the freeway",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 24,
-          "endOffset": 84
-        }
-      ]
+      }
     },
     {
       "complaintId": "11718280",
@@ -3437,38 +1512,7 @@
         "inferenceMs": 2004.2799999999988,
         "elapsedMs": 2004.2799999999988,
         "cached": false
-      },
-      "failureModeExtraction": {
-        "complaintId": "11718280",
-        "predictions": [
-          {
-            "text": "engine faliure",
-            "type": "Failure Mode",
-            "confidence": 10,
-            "startOffset": 115,
-            "endOffset": 129
-          }
-        ],
-        "inferenceMs": 1734.7874999999767,
-        "elapsedMs": 0,
-        "cached": true
-      },
-      "combinedPredictions": [
-        {
-          "text": "engine",
-          "type": "Component",
-          "confidence": 10,
-          "startOffset": 115,
-          "endOffset": 121
-        },
-        {
-          "text": "engine faliure",
-          "type": "Failure Mode",
-          "confidence": 10,
-          "startOffset": 115,
-          "endOffset": 129
-        }
-      ]
+      }
     }
   ]
 }

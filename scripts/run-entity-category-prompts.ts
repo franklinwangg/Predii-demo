@@ -55,10 +55,10 @@ function assert(condition: unknown, message: string): asserts condition {
 function parseRunOptions() {
   const promptIdsArgument = process.argv.find((argument) => argument.startsWith("--prompt-ids="));
   const outputFolderArgument = process.argv.find((argument) => argument.startsWith("--output-folder="));
-  const promptIds = (promptIdsArgument?.slice("--prompt-ids=".length) ?? "4,5")
+  const promptIds = (promptIdsArgument?.slice("--prompt-ids=".length) ?? "6,3")
     .split(",")
     .map((value) => Number(value));
-  const outputFolder = outputFolderArgument?.slice("--output-folder=".length) ?? "test-4";
+  const outputFolder = outputFolderArgument?.slice("--output-folder=".length) ?? "test-6";
   assert(promptIds.length === 2 && promptIds.every(Number.isSafeInteger),
     "Provide exactly two prompt IDs with --prompt-ids=<component-id>,<failure-mode-id>.");
   assert(/^test-\d+$/.test(outputFolder), "Output folder must be a test-N directory.");

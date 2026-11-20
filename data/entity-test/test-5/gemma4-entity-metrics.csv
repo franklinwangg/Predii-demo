@@ -1,4 +1,2 @@
 "category","complaints","ground_truth_entities","predicted_entities","precision","recall","f1","true_positives","false_positives","false_negatives","failed_complaints"
 "Components","30","103","110","0.7454545454545455","0.7961165048543689","0.7699530516431926","82","28","21","0"
-"Failure Modes","30","91","63","0.7936507936507936","0.5494505494505495","0.6493506493506493","50","13","41","4"
-"Overall","30","194","173","0.7630057803468208","0.6804123711340206","0.7193460490463215","132","41","62","4"
